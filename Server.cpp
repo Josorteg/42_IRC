@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/17 17:56:49 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/17 18:48:43 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void Server::SetServer(int port)
 	_serverFd = socket(AF_INET,SOCK_STREAM,0);
 	if (_serverFd == -1)
 	{
-		std::cerr<<"error"<<std::endl;
+		std::cerr<<"error1"<<std::endl;
 		exit(1);
 	}
 	serverAdress.sin_family = AF_INET;
@@ -31,19 +31,19 @@ void Server::SetServer(int port)
 
 	if (fcntl(_serverFd, F_SETFL, O_NONBLOCK) == -1)
 	{
-		std::cerr<<"error"<<std::endl;
+		std::cerr<<"error2"<<std::endl;
 		exit(2);
 	}
 
 	if (bind (_serverFd,(struct sockaddr *)&serverAdress,sizeof(serverAdress)) == -1)
 	{
-		std::cerr<<"error"<<std::endl;
+		std::cerr<<"error3"<<std::endl;
 		exit(3);
 	}
 
 	if (listen(_serverFd,10) == -1)
 	{
-		std::cerr<<"error"<<std::endl;
+		std::cerr<<"error4"<<std::endl;
 		exit(4);
 	}
 
@@ -112,7 +112,26 @@ void Server::_NewClient(void)
 }
 void Server::_Request(int fd)
 {
-	(void)fd;
+	char buffer[1024];
+	memset(buffer,0,sizeof(buffer));
+
+	ssize_t bytes = recv(fd, buffer, sizeof(buffer) - 1 , 0);
 	std::cout<<"Request from:"<<fd<<std::endl;
+
+	if (bytes <= 0) // 0 y -1 no es lo mismo, 0 es desconexion, -1 error. De momento nada
+	{
+		std::cerr<<"error disconection"<<std::endl;
+		//funcion para liberar FD's (poll, lista de clientes y cerrrar FD)
+		close(fd);
+	}
+	else
+	{
+		buffer[bytes] ='\0';
+		std::cout<<"mensaje :"<<buffer<<std::endl;
+	}
+
+
+
+
 }
 Server::~Server (void){}
