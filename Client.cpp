@@ -1,36 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
+/*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/17 17:45:51 by josorteg         ###   ########.fr       */
+/*   Created: 2024/04/17 17:01:50 by josorteg          #+#    #+#             */
+/*   Updated: 2024/04/17 17:45:03 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Client.hpp"
 
-#include"Client.hpp"
-#include "Includes.hpp"
-
-class Server
+Client::Client(void)
 {
-	public:
 
-		Server(void);
-		~Server(void);
-		void SetServer(int port);
-		void RunServer();
+}
 
-	private:
+Client::~Client(void)
+{
 
-		void _NewClient(void);
-		void _Request(int fd);
+}
+
+Client::Client (int fd)
+{
+	this->_clientFd = fd;
+}
 
 
-		int	_serverFd;
-		std::vector<Client> _Clients;
-		std::vector<pollfd> _pollFds;
-
-};

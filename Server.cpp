@@ -6,11 +6,12 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/16 19:59:15 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:56:49 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+
 
 bool sigend = false;
 Server::Server (void){}
@@ -85,11 +86,33 @@ void Server::RunServer(void)
 
 void Server::_NewClient(void)
 {
-	std::cout<<"New Client"<<std::endl;
+
+	sockaddr_in clientAdress;
+	pollfd NewPoll;
+	socklen_t len = sizeof(clientAdress);
+	int clientFd=accept(_serverFd,(struct sockaddr *)&clientAdress,&len);
+	if (clientFd == -1)
+	{
+		std::cerr<<"error6"<<std::endl;
+			exit(6);
+	}
+	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) == -1)
+	{
+		std::cerr<<"error7"<<std::endl;
+			exit(7);
+	}
+	NewPoll.fd = clientFd;
+	NewPoll.events = POLLIN;
+	_pollFds.push_back(NewPoll);
+	Client newClient(clientFd);
+	_Clients.push_back(newClient);
+	std::cout<<"new client with"<<clientFd<<std::endl;
+
+
 }
 void Server::_Request(int fd)
 {
 	(void)fd;
-	std::cout<<"Request"<<std::endl;
+	std::cout<<"Request from:"<<fd<<std::endl;
 }
 Server::~Server (void){}
