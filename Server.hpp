@@ -6,14 +6,14 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/17 17:45:51 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/24 17:58:00 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#include"Client.hpp"
+#pragma once
 #include "Includes.hpp"
 
+class Client;
 class Server
 {
 	public:
@@ -30,7 +30,8 @@ class Server
 
 
 		int	_serverFd;
-		std::vector<Client> _Clients;
+		//std::vector<Client> _Clients;
+		std::map<int, Client> _Clients;
 		std::vector<pollfd> _pollFds;
 
 };
