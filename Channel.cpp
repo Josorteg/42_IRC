@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:06 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 16:26:19 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/04/27 19:27:41 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@ Channel::Channel(Server *serv,std::string name,Client &client)
 	_members.insert(client.getFd());
 	_invited.insert(client.getFd());
 	_operators.insert(client.getFd());
+	_i = false;
+	_k = false;
+	_l = false;
+	_topic = "life";
 
 
 }

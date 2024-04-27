@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 16:16:57 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/04/27 19:01:59 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,38 @@ class Channel
 		std::string getName(void) const {return this->_name;};
 		void setName(std::string name) {this->_name = name;};
 		void addClient(Client client);
+		std::string getPassword(void){return this->_password;};
+		void setPassword(std::string pass){ this->_password = pass;};
+		std::string getTopic(void){return this->_topic;};
+		void setTopic(std::string topic){ this->_topic = topic;};		
+		bool get_i(void){return this->_i;};
+		void set_i(bool i){this->_i = i;};
+		bool get_k(void){return this->_k;};
+		void set_k(bool k){this->_k = k;};
+		bool get_l(void){return this->_l;};
+		void set_l(bool l){this->_l = l;};	
+		int getClientLimit(void){return this->_clientLimit;};
+		void setClientLimit(int limit){this->_clientLimit = limit;};
+		//std::set<int> getOperators(void){return this->_operators;};
+		std::set<int> getInvited(void){return this->_invited;};
+		std::set<int> getMembers(void){return this->_members;};
 
+		
 	private:
 
 		Server *_server;
 		std::string _name;
+		std::string _password;
+		std::string _topic;
 		std::set<int> _members;
 		std::set<int> _operators;
 		std::set<int> _invited;
+		
+		bool	_i;
+		bool	_k;
+		bool	_l;
+		int	_clientLimit;
+		
 
 		
 
