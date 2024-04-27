@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/25 20:02:44 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/27 13:09:50 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,11 @@
 
 
 bool sigend = false;
-Server::Server (void){}
+Server::Server (void){
+	this->_servername = "PapaPitufo";
+	this->setTime();
+}
+
 void Server::SetServer(int port,std::string psw)
 {
 	sockaddr_in serverAdress;
@@ -278,20 +282,7 @@ void  Server::ProcessCommand(std::string command, int fd)
 
 
 
-	//here i added your code,i added nickname we saved for testing 2 clients
-		//to see in client
-		//RPL_WELCOME(client, networkname, nick, userhost) (std::string("001 ") + client + " :Welcome to the " + networkname + " Network, " + nick + "!" + userhost)
-		// std::string messagew = "001 " + it->second.getNickname() + " :Welcome to the IRCMEME Yensaika josorteg\r\n";
-		// //# define RPL_YOURHOST(client, servername) (std::string("002 ") + client + " :Your host is " + servername + ", running version 1.0")
-		// std::string messagey = "002 Yensaika :IRCMEME\r\n";
 
-		// send(fd, messagew.c_str(), messagew.size(), 0);
-		// send(fd, messagey.c_str(), messagey.size(), 0);
-		//client->sendMessage(RPL_MYINFO(client->getNick(), "Jareste.Segfault.BieldidNothing"));
-		//sendMessage(RPL_TOPIC(client->getNick(), channel->getName(), channel->getTopic()));
-		//checking response
-		//std::string message = "ECHO\r\n";
- 		//send(fd, message.c_str(), message.size(), 0);
 	}
 }
 
@@ -312,7 +303,7 @@ void Server::_rmClient(const Client &c)
     int fd = c.getFd();
     close(fd);
 	//delete _Clients[fd];/problema de malloc, no se donde alocamos memoria
-	 std::cout<<_Clients.erase(fd);
+	_Clients.erase(fd);
 }
 
 void Server::_passServer(Client &client,std::string pass)
@@ -352,21 +343,23 @@ void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 	 }
 }
 
-void Server::_nickServer(Client &client, std::vector<std::string> parsedCommand)
-{
-	std::cout<<"_nickServer:  " <<std::endl;
-	std::string messagew = ERR_NICKNAMEINUSE(parsedCommand[1]) + "\r\n";
-	std::cout<< messagew <<std::endl;
-	//send(client.getFd(), messagew.c_str(), messagew.size(), 0);
-	send(client.getFd(), "432 josemiguel pepe :Erroneus nickname\r\n",41, 0);
+void Server::setTime() {
+
+    std::time_t currentTime = std::time(nullptr);
+    std::tm* localTime = std::localtime(&currentTime);
+
+    int year = localTime->tm_year + 1900; // years since 1900
+    int month = localTime->tm_mon + 1;     // months since January (0-based)
+    int day = localTime->tm_mday;          // day of the month (1-31)
+    int hour = localTime->tm_hour;         // hours since midnight (0-23)
+    int minute = localTime->tm_min;        // minutes after the hour (0-59)
+    int second = localTime->tm_sec;        // seconds after the minute (0-61)
 
 
+    std::ostringstream oss;
+    oss << year << '-' << month << '-' << day << ' ' << hour << ':' << minute << ':' << second;
+    this->_time = oss.str();
 
-	_rmClient(client);
-	return;
-}
-void Server::_userServer(Client &client, std::vector<std::string> parsedCommand)
-{
-	(void)parsedCommand;
-	(void)client;
+	//make it better 
+    std::cout << "Current date and time: " << _time << std::endl;
 }

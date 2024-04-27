@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 17:01:50 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/25 19:15:14 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/27 11:40:56 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,8 @@ Client::~Client(void)
 Client::Client (int fd)
 {
 	this->_clientFd = fd;
-	this->setUsername("BLA");
 	this->_hasPassword = false;
-	this->_authentic = false;
+	this->_isRegistered = false;
 }
 
 

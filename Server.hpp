@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/25 18:33:34 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/27 13:05:56 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,10 @@ class Server
 		void _rmClient(const Client &c);
 
 		std::string getPassword(void){return this->_password;};
-		int	_serverFd;
+		std::string getServername(void) const {return this->_servername;};
+		std::string getTime(void){return this->_time;};
 
+		void setTime(void);
 		void _exe(Client &client, std::vector<std::string> parsedCommand);
 		void _passServer(Client &client,std::string pass);
 		void _nickServer(Client &client, std::vector<std::string> parsedCommand);
@@ -42,6 +44,10 @@ class Server
 
 		std::map<int, Client> _Clients;
 		std::vector<pollfd> _pollFds;
+		int	_serverFd;
 		std::string _password;
+		std::string _servername;
+		std::string _time;
+
 
 };

@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 17:50:48 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/25 18:23:05 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/27 13:07:52 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <csignal>
 #include <set>
 #include <sstream>
+#include <ctime>
 #include "Client.hpp"
 //#include "Channel.hpp"
 #include "Server.hpp"
