@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 13:05:56 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/27 16:49:17 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "Includes.hpp"
 
 class Client;
+class Channel;
 class Server
 {
 	public:
@@ -41,9 +42,15 @@ class Server
 		void _passServer(Client &client,std::string pass);
 		void _nickServer(Client &client, std::vector<std::string> parsedCommand);
 		void _userServer(Client &client, std::vector<std::string> parsedCommand);
+		void _joinServer(Client &client, std::vector<std::string> parsedCommand);
+
+		//Channels
+		size_t _channelExists(std::string name);
 
 		std::map<int, Client> _Clients;
 		std::vector<pollfd> _pollFds;
+		std::vector<Channel> _Channels;
+		
 		int	_serverFd;
 		std::string _password;
 		std::string _servername;

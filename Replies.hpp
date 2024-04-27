@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 18:22:54 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 13:17:06 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/27 15:34:16 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,3 +28,19 @@
 # define RPL_YOURHOST(servername) (std::string("002 Your host is " + servername + ", running version 1.0"))
 # define RPL_CREATED(time) (std::string("003 This server was created " + time))
 # define RPL_MYINFO(servername) (std::string("004 " + servername +  " 1.0" )) //<servername> <version> <available user modes> <available channel modes>"
+
+//join
+    //ERR_NEEDMOREPARAMS      
+# define ERR_NOSUCHCHANNEL(name) (std::string("403 " + name + " :No such channel"))
+  
+//473 ERR_INVITEONLYCHAN   //  "<channel> :Cannot join channel (+i)"           
+// 475  ERR_BADCHANNELKEY //"<channel> :Cannot join channel (+k)"
+//471 ERR_CHANNELISFULL            "<channel> :Cannot join channel (+l)"   
+    
+//405 ERR_TOOMANYCHANNELS // "<channel name> :You have joined too many 
+                        // channels"
+                // - Sent to a user when they have joined the maximum
+                //   number of allowed channels and they try to join
+                //   another channel.
+                        
+//RPL_TOPIC

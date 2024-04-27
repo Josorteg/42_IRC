@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 10:04:35 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 11:53:01 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/27 15:24:39 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"Includes.hpp"
 
-static bool	parseNick(std::string nick)
+static bool	NickChecker(std::string nick)
 {
 	std::size_t found = nick.find_first_not_of(NICK_CHARACTERS);
 	if (found != std::string::npos)
@@ -32,7 +32,7 @@ void Server::_nickServer(Client &client, std::vector<std::string> parsedCommand)
 	}
 	std::cout<<"Antdes del Error en caracteres del NIck"<<std::endl;
 	//check characters
-	if (parseNick(parsedCommand[1]))
+	if (NickChecker(parsedCommand[1]))
 	{
 		std::cout<<"Error en caracteres del NIck"<<std::endl;
 		std::string message = ERR_ERRONEUSNICKNAME(parsedCommand[1]) + "\r\n";
