@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 11:38:52 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 13:12:51 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/29 12:23:20 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void Server::_userServer(Client &client, std::vector<std::string> parsedCommand)
 		return;
 	}
 	client.setUsername(parsedCommand[1]);
+	client.setRealname(parsedCommand[4]);
 	client.setHostname(parsedCommand[1] + "@127.0.0.1");
 	client.setIsRegistered(true);
 

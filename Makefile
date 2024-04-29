@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+         #
+#    By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/04/27 16:17:25 by mmoramov         ###   ########.fr        #
+#    Updated: 2024/04/29 15:12:26 by josorteg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ CFLAGS = -Werror -Wextra -Wall -std=c++98
 #########
 
 #########
-FILES = main Server Client Nick User Join Channel
+FILES = main Server Client Nick User Join Channel Whonames Mode
 
 SRC = $(addsuffix .cpp, $(FILES))
 

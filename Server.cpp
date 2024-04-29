@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 16:50:38 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:16:20 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,14 +324,14 @@ void Server::_passServer(Client &client,std::string pass)
 }
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
-	std::string cmds[3] = { "USER", "NICK", "JOIN"};//, "PRIVMSG",
-	 //"INVITE", "TOPIC", "NAMES", "MODE", "KICK", "PING" };
-	void	(Server::*f[3])(Client &client, std::vector<std::string> parsedCommand) = \
-	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer};//, &Server::_privmsg,
+	std::string cmds[5] = { "USER", "NICK", "JOIN","WHO", "MODE"};//, "PRIVMSG",
+	 //"INVITE", "TOPIC", "NAMES", "KICK", "PING" };
+	void	(Server::*f[5])(Client &client, std::vector<std::string> parsedCommand) = \
+	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, &Server::_modeServer};//, &Server::_privmsg,
 	 //&Server::_invite, &Server::_topic, &Server::_names,
 	 //&Server::_mode, &Server::_kick, &Server::_ping };
 
-	 for (int i = 0; i < 3; i++)
+	 for (int i = 0; i < 5; i++)
 	 {
 		std::cout<<"_exe i: "<<i << " for command " << parsedCommand[0]<<std::endl;
 		if (parsedCommand[0] == cmds[i])
@@ -360,7 +360,7 @@ void Server::setTime() {
     oss << year << '-' << month << '-' << day << ' ' << hour << ':' << minute << ':' << second;
     this->_time = oss.str();
 
-	//make it better 
+	//make it better
     std::cout << "Current date and time: " << _time << std::endl;
 }
 
@@ -370,7 +370,18 @@ size_t Server::_channelExists(std::string name)
    	{
 		std::cout<<"--checking channel " << _Channels[i].getName() <<std::endl;
 		if (name == _Channels[i].getName())
-			return(i + 1);	
+			return(i + 1);
 	}
 	return(0);
+}
+
+Channel Server::getChannelbyname(std::string name)
+{
+	int i = 0;
+	while (name != _Channels[i].getName())
+	{
+		i++;
+	}
+	return (_Channels[i]);
+
 }

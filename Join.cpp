@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/04/27 20:46:13 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/04/29 18:09:25 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 	std::vector<std::string> keyChannels;
 	if (parsedCommand.size() == 3)
 		keyChannels = _splitString(parsedCommand[2], ',');
-	for (size_t i = 0; i < joinChannels.size(); ++i)	
-	{	
+	for (size_t i = 0; i < joinChannels.size(); ++i)
+	{
 		Channel newChannel(this, joinChannels[i], client);
 
 		if (!newChannel._nameCheck(joinChannels[i]))
@@ -81,13 +81,13 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				std::cout<<"Size before pushback: " << _Channels.size() <<std::endl;
 				_Channels.push_back(newChannel);
 				std::cout<<"Size after pushback: " << _Channels.size() <<std::endl;
-				message = "create a new channel\r\n";
-				send(client.getFd(),message.c_str(),message.size(),0); 
-				nbr = _channelExists((joinChannels[i])); //find new number  							 
+				//message = "create a new channel\r\n";
+				//send(client.getFd(),message.c_str(),message.size(),0);
+				nbr = _channelExists((joinChannels[i])); //find new number
 			}
-			
+
 			//(joinChannels[i]) = "pop";
-			(joinChannels[i]).erase((joinChannels[i]).begin());
+			//(joinChannels[i]).erase((joinChannels[i]).begin());
 			// if JOIN is successful, the user is then sent the channel's topic
 			//    (using RPL_TOPIC) and the list of users who are on the channel (using
 			//    RPL_NAMREPLY), which must include the user joining.
@@ -102,16 +102,27 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				//i have topic
 				 message = RPL_TOPIC((joinChannels[i]),_Channels[nbr].getTopic()) + "\r\n";
 				send(client.getFd(),message.c_str(),message.size(),0);
-			}			
-			message = RPL_NAMREPLY((joinChannels[i]),"@jose joan miriam") + "\r\n"; //todo
+			}
+			std::cout<<"Before RPL_NAMREPLY: " << joinChannels[i] <<std::endl;
+			std::string mem;
+			std::set<int> currentUsers;
+			currentUsers = (getChannelbyname(parsedCommand[1])).getMembers();
+			for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
+			{
+				int a= *i;
+				std::map<int, Client>::iterator it = _Clients.find(a);
+				mem = mem + "@" + it->second.getNickname() + " ";
+			}
+
+			message = RPL_NAMREPLY((joinChannels[i]),mem) + "\r\n"; //todo
 			std::cout<<"Sending: " << message <<std::endl;
 			send(client.getFd(),message.c_str(),message.size(),0);
 			message = RPL_ENDOFNAMES((joinChannels[i])) + "\r\n";
-			std::cout<<"Sending: " << message <<std::endl;				
+			std::cout<<"Sending: " << message <<std::endl;
 			send(client.getFd(),message.c_str(),message.size(),0);
-		}		
-		
+		}
+
 	}
 }
 
- 
+

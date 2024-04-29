@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 16:49:17 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:12:59 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,20 @@ class Server
 		void _nickServer(Client &client, std::vector<std::string> parsedCommand);
 		void _userServer(Client &client, std::vector<std::string> parsedCommand);
 		void _joinServer(Client &client, std::vector<std::string> parsedCommand);
+		void _modeServer(Client &client, std::vector<std::string> parsedCommand);
+
+		void _whoServer(Client &client, std::vector<std::string> parsedCommand);
 
 		//Channels
 		size_t _channelExists(std::string name);
+		Channel getChannelbyname(std::string name);
+
+		//Clients
 
 		std::map<int, Client> _Clients;
 		std::vector<pollfd> _pollFds;
 		std::vector<Channel> _Channels;
-		
+
 		int	_serverFd;
 		std::string _password;
 		std::string _servername;
