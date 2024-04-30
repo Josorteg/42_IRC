@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 11:38:52 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/29 12:23:20 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/30 10:54:03 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,16 @@ void Server::_userServer(Client &client, std::vector<std::string> parsedCommand)
 	std::cout<<"WELCOME MESSAGE "<< message<<std::endl;
 	send(client.getFd(),message.c_str(),message.size(),0);
 
-	message = RPL_YOURHOST(this->getServername()) + "\r\n";
+	message = RPL_YOURHOST(this->getServername(),client.getNickname()) + "\r\n";
 	std::cout<<"WELCOME MESSAGE 2 "<< message<<std::endl;
 	send(client.getFd(),message.c_str(),message.size(),0);
 
 
-	message = RPL_CREATED(this->getTime()) + "\r\n";
+	message = RPL_CREATED(this->getServername(),this->getTime()) + "\r\n";
 	std::cout<<"WELCOME MESSAGE 3 "<< message<<std::endl;
 	send(client.getFd(),message.c_str(),message.size(),0);
 
-	message = RPL_MYINFO(this->getServername()) + "\r\n";
+	message = RPL_MYINFO(this->getServername(),client.getNickname()) + "\r\n";
 	std::cout<<"WELCOME MESSAGE 4 "<< message<<std::endl;
 	send(client.getFd(),message.c_str(),message.size(),0);
 

@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 09:51:39 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/29 18:53:08 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/30 11:48:48 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ void Server::_whoServer(Client &client, std::vector<std::string> parsedCommand)
 		{
 			int a= *i;
 			std::map<int, Client>::iterator it = _Clients.find(a);
-			//std::string message = it->second.getRealname();
-			std::string message = RPL_WHOREPLY(parsedCommand[1],it->second.getUsername(),it->second.getHostname(),getServername(),it->second.getNickname(),"a",it->second.getRealname()) + "\r\n";
+			//# define RPL_WHOREPLY(channel,nickname,hostname,servername,usernick,realname)(std::string(":"+ servername + " 352 " + nickname + " " + channel + " " + hostname + " " + servername + " " + usernick + " H :0" + realname))
+			std::string message = RPL_WHOREPLY(parsedCommand[1],client.getNickname(),it->second.getHostname(),getServername(),it->second.getNickname(),it->second.getRealname()) + "\r\n";
 			send(client.getFd(),message.c_str(),message.size(),0);
 		}
 
 
-
-		std::string message = RPL_ENDOFWHO(parsedCommand[1]) + "\r\n";
+		
+		std::string message = RPL_ENDOFWHO(parsedCommand[1],getServername(),client.getNickname()) + "\r\n";
 		send(client.getFd(),message.c_str(),message.size(),0);
 	}
 	else
