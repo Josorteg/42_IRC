@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/29 15:16:20 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/04/30 18:34:15 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,14 +324,14 @@ void Server::_passServer(Client &client,std::string pass)
 }
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
-	std::string cmds[5] = { "USER", "NICK", "JOIN","WHO", "MODE"};//, "PRIVMSG",
+	std::string cmds[7] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON"};//,
 	 //"INVITE", "TOPIC", "NAMES", "KICK", "PING" };
-	void	(Server::*f[5])(Client &client, std::vector<std::string> parsedCommand) = \
-	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, &Server::_modeServer};//, &Server::_privmsg,
+	void	(Server::*f[7])(Client &client, std::vector<std::string> parsedCommand) = \
+	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, &Server::_modeServer, &Server::_privmsgServer,&Server::_isonServer};// s::string> parsedCommand);//,
 	 //&Server::_invite, &Server::_topic, &Server::_names,
 	 //&Server::_mode, &Server::_kick, &Server::_ping };
 
-	 for (int i = 0; i < 5; i++)
+	 for (int i = 0; i < 7; i++)
 	 {
 		std::cout<<"_exe i: "<<i << " for command " << parsedCommand[0]<<std::endl;
 		if (parsedCommand[0] == cmds[i])
@@ -384,4 +384,14 @@ Channel Server::getChannelbyname(std::string name)
 	}
 	return (_Channels[i]);
 
+}
+
+int Server::_getClientfdByName(std::string name)
+{
+	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
+   	{
+		if (it->second.getNickname() == name)
+			return(it->second.getFd());
+	}
+	return(0);
 }

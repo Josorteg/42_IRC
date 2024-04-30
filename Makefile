@@ -6,7 +6,7 @@
 #    By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/04/29 15:12:26 by josorteg         ###   ########.fr        #
+#    Updated: 2024/04/30 17:47:26 by josorteg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ CFLAGS = -Werror -Wextra -Wall -std=c++98
 #########
 
 #########
-FILES = main Server Client Nick User Join Channel Whonames Mode
+FILES = main Server Client Nick User Join Channel Whonames Mode Privmsg
 
 SRC = $(addsuffix .cpp, $(FILES))
 
