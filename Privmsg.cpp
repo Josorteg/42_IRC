@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/30 18:41:57 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/01 15:56:23 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,60 +16,66 @@
 void Server::_privmsgServer(Client &client, std::vector<std::string> parsedCommand)
 {
 	std::string message;
-	int fd;
+
+	if (parsedCommand.size() > 1 && parsedCommand[1][0] == ':')
+		return(_sendMessage(client, ERR_NORECIPIENT(getServername())));
+	if (parsedCommand.size() == 2)
+		return(_sendMessage(client, ERR_NOTEXTTOSEND(getServername())));	
+	
+	std::vector<std::string> receivers = _splitString(parsedCommand[1], ',');
+	int fd; //delete
 
 	std::string text ="";
-	for (size_t j = 2 ; j < parsedCommand.size(); j++)
+	for (size_t j = 2;j < parsedCommand.size();j++)
 	{
-		text = text + " " + parsedCommand[j];
+		text += " " + parsedCommand[j];
 	}
 /*
-PRIVMSG JohnDoe :Hello, how are you?
+PRIVMSG JohnDoe,Mimi :Hello, how are you?
 */
-fd = client.getFd();
+fd = client.getFd(); //delete
 //check errors
 
-// check if is a channel
-
-if (parsedCommand[1][0] == '#')
-{ //channel message
-	;
-}
-else //person to person message
-{
-	//check if person exists
-	int clientToSendMessageFd = _getClientfdByName(parsedCommand[1]);
-	if (clientToSendMessageFd == 0)
+	for (size_t i = 0; i < receivers.size(); ++i)
 	{
-		//didnt find a client
-		;
+		if (receivers[i][0] == '#') // check if is a channel
+		{ //channel message
+			;
+		}
+		else //person to person message
+		{
+			//check if person exists
+			int clientToSendMessageFd = _getClientfdByName(receivers[i]);
+			if (clientToSendMessageFd == 0)
+			{
+				_sendMessage(client, ERR_NOSUCHNICK(getServername(), receivers[i]));
+			}
+			else
+			{
+				message = ":" + client.getNickname() + "!" + client.getHostname() + " "
+					+ parsedCommand[0] + " " + receivers[i] + text;
+				std::map<int, Client>::iterator it = _Clients.find(clientToSendMessageFd);
+				_sendMessage(it->second, message);
+				std::cout<<"_privmsgServer: message is " << message << std::endl;
+			}
+		}
 	}
-	else
-	{
-		//i found a client
-
-
-		message = ":" + client.getNickname() + "!" + client.getHostname() + " "
-			+ parsedCommand[0] + " " + parsedCommand[1] + text
-		+ "\r\n";
-		send(clientToSendMessageFd,message.c_str(),message.size(),0);
-	}
-
-}
 }
 
 void Server::_isonServer(Client &client, std::vector<std::string> parsedCommand)
 {
-	int clientToSendMessageFd = _getClientfdByName(parsedCommand[1]);
-	if (clientToSendMessageFd == 0)
+	std::string message;
+	std::string listOfClients = "";
+	
+	if (parsedCommand.size() < 2)
+		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
+	for (size_t i = 1; i < parsedCommand.size(); ++i)
 	{
-		std::string message =  (":" + getServername() + " 303 "+ client.getNickname() + " \r\n");
-		send(client.getFd(),message.c_str(),message.size(),0);
-	}
-	else
-	{
-		std::string message =  (":" + getServername() + " 303 "+ client.getNickname() + " :" + parsedCommand[1]+" \r\n");
-		send(client.getFd(),message.c_str(),message.size(),0);
-	}
-
+		if (_getClientfdByName(parsedCommand[i]) != 0)
+		{
+			listOfClients += parsedCommand[i] + " ";	
+		}	
+	}					
+	std::cout<<"_isonServer: message is " << message << std::endl;
+	_sendMessage(client, RPL_ISON(getServername(), client.getNickname(),listOfClients));
 }

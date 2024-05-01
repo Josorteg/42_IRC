@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/30 18:34:37 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/01 15:38:16 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Server
 		std::string getTime(void){return this->_time;};
 
 		void setTime(void);
+		void _sendMessage(Client &client,std::string message);
 		void _exe(Client &client, std::vector<std::string> parsedCommand);
 		void _passServer(Client &client,std::string pass);
 		void _nickServer(Client &client, std::vector<std::string> parsedCommand);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 17:00:28 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/29 12:23:37 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/01 14:52:48 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class Client
 		void setNickname(std::string nickname) {this->_nickname = nickname;};
 		void setUsername(std::string username) {this->_username = username;};
 		void setHostname(std::string hostname) {this->_hostname = hostname;};
-		void setServername(std::string servername) {this->_servername = servername;};
+		//void setServername(std::string servername) {this->_servername = servername;};
 		void setRealname(std::string realname) {this->_realname = realname;};
 		void setBuffer(std::string buffer) {this->_buffer = buffer;};
 
@@ -37,7 +37,7 @@ class Client
 		std::string getNickname(void) const {return this->_nickname;};
 		std::string getUsername(void) const {return this->_username;};
 		std::string getHostname(void) const {return this->_hostname;};
-		std::string getServername(void) const {return this->_servername;};
+		//std::string getServername(void) const {return this->_servername;};
 		std::string getRealname(void) const {return this->_realname;};
 		std::string getBuffer(void) const {return this->_buffer;};
 
@@ -49,7 +49,7 @@ class Client
 		std::string _nickname;
 		std::string _username;
 		std::string _hostname;
-		std::string _servername;
+		//std::string _servername; //servername is in the server
 		std::string _realname;
 		std::string _buffer;
 

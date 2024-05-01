@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Whonames.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 09:51:39 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/30 11:48:48 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/01 15:45:41 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,14 @@ void Server::_whoServer(Client &client, std::vector<std::string> parsedCommand)
 		{
 			int a= *i;
 			std::map<int, Client>::iterator it = _Clients.find(a);
-			//# define RPL_WHOREPLY(channel,nickname,hostname,servername,usernick,realname)(std::string(":"+ servername + " 352 " + nickname + " " + channel + " " + hostname + " " + servername + " " + usernick + " H :0" + realname))
-			std::string message = RPL_WHOREPLY(parsedCommand[1],client.getNickname(),it->second.getHostname(),getServername(),it->second.getNickname(),it->second.getRealname()) + "\r\n";
-			send(client.getFd(),message.c_str(),message.size(),0);
+			_sendMessage(client, RPL_WHOREPLY(parsedCommand[1],client.getNickname(),it->second.getHostname(),getServername(),it->second.getNickname(),it->second.getRealname()));
+			
 		}
-
-
-		
-		std::string message = RPL_ENDOFWHO(parsedCommand[1],getServername(),client.getNickname()) + "\r\n";
-		send(client.getFd(),message.c_str(),message.size(),0);
+		_sendMessage(client, RPL_ENDOFWHO(parsedCommand[1],getServername(),client.getNickname()));
 	}
 	else
 	{
-		std::string message = ERR_NOSUCHCHANNEL(parsedCommand[1]) + "\r\n";
-		send(client.getFd(),message.c_str(),message.size(),0);
+		_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1]));
 	}
 
 

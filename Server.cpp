@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/30 18:34:15 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/01 15:39:13 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -394,4 +394,10 @@ int Server::_getClientfdByName(std::string name)
 			return(it->second.getFd());
 	}
 	return(0);
+}
+
+void Server::_sendMessage(Client &client,std::string message)
+{
+	message += "\r\n";
+	send(client.getFd(),message.c_str(),message.size(),0);
 }

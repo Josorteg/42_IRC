@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/04/30 16:51:31 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/01 15:54:52 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,9 @@
 void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 {
    std::string message;
-	//check if username has 2 parameters
 	if (parsedCommand.size() < 2)
 	{
-		message = ERR_NEEDMOREPARAMS(parsedCommand[0]) + "\r\n";
-		send(client.getFd(),message.c_str(),message.size(),0);
+		_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0]));
 		_rmClient(client);
 		return;
 	}
@@ -34,8 +32,7 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 
 		if (!newChannel._nameCheck(joinChannels[i]))
 		{
-			message = ERR_NOSUCHCHANNEL((joinChannels[i])) + "\r\n";
-			send(client.getFd(),message.c_str(),message.size(),0);
+			_sendMessage(client, ERR_NOSUCHCHANNEL((joinChannels[i])));
 		}
 		else
 		{
@@ -50,21 +47,18 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				//channel is full
 				if (_Channels[nbr].get_l() && static_cast<int>(_Channels[nbr].getMembers().size()) == _Channels[nbr].getClientLimit())
 				{
-					message = ERR_CHANNELISFULL((joinChannels[i])) + "\r\n";
-					send(client.getFd(),message.c_str(),message.size(),0);
+					_sendMessage(client, ERR_CHANNELISFULL((joinChannels[i])));
 				}
 				//invite only channel
 				if (_Channels[nbr].get_i() && _Channels[nbr].getInvited().find(client.getFd()) != _Channels[nbr].getInvited().end())
 				{
-					message = ERR_INVITEONLYCHAN((joinChannels[i])) + "\r\n";
-					send(client.getFd(),message.c_str(),message.size(),0);
+					_sendMessage(client, ERR_INVITEONLYCHAN((joinChannels[i])));
 				}
 				//bad password
 				else if (_Channels[nbr].get_k() && (keyChannels.size() < i \
 				|| _Channels[nbr].getPassword() != keyChannels[i]))
 				{
-					message = ERR_BADCHANNELKEY((joinChannels[i])) + "\r\n";
-					send(client.getFd(),message.c_str(),message.size(),0);
+					_sendMessage(client, ERR_BADCHANNELKEY((joinChannels[i])));
 				}
 				else
 				{
@@ -73,13 +67,13 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 					_Channels[nbr].addClient(client);
 					//
 					std::set<int> currentUsers;
-					std::string joinMessage = ":" + client.getNickname() + "!" + client.getServername() + " JOIN " + parsedCommand[1] + "\r\n";
+					std::string joinMessage = ":" + client.getNickname() + "!" + getServername() + " JOIN " + parsedCommand[1] + "\r\n";
 					currentUsers = (getChannelbyname(parsedCommand[1])).getMembers();
 					for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
 					{
 						int a= *i;
 						std::map<int, Client>::iterator it = _Clients.find(a);
-						send(it->second.getFd(),joinMessage.c_str(),joinMessage.size(),0);
+						_sendMessage(it->second, joinMessage);
 						std::cout<<"Mensaje de join a canal Ya creado????"<<std::endl;
 					}
 
@@ -88,19 +82,16 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 			else
 			{
 				std::cout<<"No channel doesnt exists: " << (joinChannels[i]) <<std::endl;
-				std::cout<<"Size before pushback: " << _Channels.size() <<std::endl;
 				_Channels.push_back(newChannel);
-
-				std::cout<<"Size after pushback: " << _Channels.size() <<std::endl;
 				std::set<int> currentUsers;
-				std::string joinMessage = ":" + client.getNickname() + "!" + client.getServername() + " JOIN " + parsedCommand[1] + "\r\n";
+				std::string joinMessage = ":" + client.getNickname() + "!" + getServername() + " JOIN " + parsedCommand[1] + "\r\n";
 				currentUsers = (getChannelbyname(parsedCommand[1])).getMembers();
 				for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
 				{
 					std::cout<<"Mensaje de join a canal nuevo!!!!!!!!!!!!!!!!!!!"<<std::endl;
 					int a= *i;
 					std::map<int, Client>::iterator it = _Clients.find(a);
-					send(it->second.getFd(),joinMessage.c_str(),joinMessage.size(),0);
+					_sendMessage(it->second, joinMessage);
 				}
 				//message = "create a new channel\r\n";
 				//send(client.getFd(),message.c_str(),message.size(),0);
@@ -115,14 +106,12 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 			if (_Channels[nbr].getTopic().empty())
 			{
 				//i dont have topic
-				message = RPL_NOTOPIC((joinChannels[i])) + "\r\n";
-				send(client.getFd(),message.c_str(),message.size(),0);
+				_sendMessage(client, RPL_NOTOPIC((joinChannels[i])));
 			}
 			else
 			{
 				//i have topic
-				 message = RPL_TOPIC((joinChannels[i]),_Channels[nbr].getTopic()) + "\r\n";
-				send(client.getFd(),message.c_str(),message.size(),0);
+				_sendMessage(client, RPL_TOPIC((joinChannels[i]),_Channels[nbr].getTopic()));
 			}
 			std::cout<<"Before RPL_NAMREPLY: " << joinChannels[i] <<std::endl;
 			std::string mem;
@@ -134,14 +123,8 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				std::map<int, Client>::iterator it = _Clients.find(a);
 				mem = mem + "@" + it->second.getNickname() + " ";
 			}
-			//# define RPL_NAMREPLY(servername,nickname,channel,clientlist)(std::string(":" servername + " " + nickname + " " + channel + " :" + clientlist))
-			message = RPL_NAMREPLY(getServername(),client.getNickname(),joinChannels[i],mem) + "\r\n"; //todo
-			std::cout<<"Sending: " << message <<std::endl;
-			send(client.getFd(),message.c_str(),message.size(),0);
-			message = RPL_ENDOFNAMES((joinChannels[i])) + "\r\n";
-
-			std::cout<<"Sending: " << message <<std::endl;
-			send(client.getFd(),message.c_str(),message.size(),0);
+			_sendMessage(client, RPL_NAMREPLY(getServername(),client.getNickname(),joinChannels[i],mem));
+			_sendMessage(client, RPL_ENDOFNAMES((joinChannels[i])));
 		}
 
 	}
