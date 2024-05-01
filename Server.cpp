@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/01 15:39:13 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/01 16:57:01 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,14 +324,14 @@ void Server::_passServer(Client &client,std::string pass)
 }
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
-	std::string cmds[7] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON"};//,
-	 //"INVITE", "TOPIC", "NAMES", "KICK", "PING" };
-	void	(Server::*f[7])(Client &client, std::vector<std::string> parsedCommand) = \
-	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, &Server::_modeServer, &Server::_privmsgServer,&Server::_isonServer};// s::string> parsedCommand);//,
-	 //&Server::_invite, &Server::_topic, &Server::_names,
+	std::string cmds[8] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE"};//,
+	 //"TOPIC", "NAMES", "KICK", "PING" };
+	void	(Server::*f[8])(Client &client, std::vector<std::string> parsedCommand) = \
+	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, &Server::_modeServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer};
+	 // &Server::_topic, &Server::_names,
 	 //&Server::_mode, &Server::_kick, &Server::_ping };
 
-	 for (int i = 0; i < 7; i++)
+	 for (int i = 0; i < 8; i++)
 	 {
 		std::cout<<"_exe i: "<<i << " for command " << parsedCommand[0]<<std::endl;
 		if (parsedCommand[0] == cmds[i])

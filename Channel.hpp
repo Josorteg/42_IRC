@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/29 13:28:23 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/01 17:35:37 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,12 @@ class Channel
 		void set_l(bool l){this->_l = l;};
 		int getClientLimit(void){return this->_clientLimit;};
 		void setClientLimit(int limit){this->_clientLimit = limit;};
-		//std::set<int> getOperators(void){return this->_operators;};
+		std::set<int> getOperators(void){return this->_operators;};
 		std::set<int> getInvited(void){return this->_invited;};
 		std::set<int> getMembers(void){return this->_members;};
-
+		bool isOperator(int fd) const {return _operators.find(fd) != _operators.end();};
+		bool isInvited(int fd) const {return _invited.find(fd) != _invited.end();};
+		bool isMember(int fd) const {return _members.find(fd) != _members.end();};
 
 	private:
 
