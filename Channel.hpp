@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/01 17:35:37 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/02 17:42:49 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class Channel
 		bool _nameCheck(std::string name);
 		std::string getName(void) const {return this->_name;};
 		void setName(std::string name) {this->_name = name;};
-		void addClient(Client client);
+
 		std::string getPassword(void){return this->_password;};
 		void setPassword(std::string pass){ this->_password = pass;};
 		std::string getTopic(void){return this->_topic;};
@@ -37,6 +37,13 @@ class Channel
 		void set_l(bool l){this->_l = l;};
 		int getClientLimit(void){return this->_clientLimit;};
 		void setClientLimit(int limit){this->_clientLimit = limit;};
+
+		void addMember(Client client);
+		void addOperator(Client client);
+		void addInvited(Client client);
+		//void addOperator(Client client){this->_operators.insert(client.getFd());};
+		//void addOperator(Client client){this->_operators.insert(client.getFd());};
+		//void addOperator(Client client);//??
 		std::set<int> getOperators(void){return this->_operators;};
 		std::set<int> getInvited(void){return this->_invited;};
 		std::set<int> getMembers(void){return this->_members;};

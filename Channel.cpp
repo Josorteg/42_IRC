@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:06 by josorteg          #+#    #+#             */
-/*   Updated: 2024/04/27 19:27:41 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/02 17:42:43 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ Channel::Channel(Server *serv,std::string name,Client &client)
 	_k = false;
 	_l = false;
 	_topic = "life";
-
-
 }
 
 bool Channel::_nameCheck(std::string name)
@@ -40,9 +38,16 @@ bool Channel::_nameCheck(std::string name)
 		return false;
 	return true;
 }
-
-void Channel::addClient(Client client)
+void Channel::addMember(Client client)
 {
 	this->_members.insert(client.getFd());
+}
+void Channel::addOperator(Client client)
+{
+	this->_operators.insert(client.getFd());
+}
+void Channel::addInvited(Client client)
+{
+	this->_invited.insert(client.getFd());
 }
 Channel::~Channel(void){}

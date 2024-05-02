@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/01 16:54:33 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/02 17:43:31 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,17 +61,29 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				{
 					//create
 					std::cout<<"Yes channel exists: " << (listOfChannels[i]) <<std::endl;
-					_Channels[nbr].addClient(client);
+					_Channels[nbr].addMember(client);
 					std::set<int> currentUsers;
 					std::string joinMessage = ":" + client.getNickname() + "!" + getServername() + " JOIN " + parsedCommand[1] + "\r\n";
 					currentUsers = (getChannelbyname(parsedCommand[1])).getMembers();
+					//mandamos mensajes join a todos los clientes con usuarios del canal de que hemos llegado!!
 					for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
 					{
 						int a= *i;
 						std::map<int, Client>::iterator it = _Clients.find(a);
+						//im here
 						_sendMessage(it->second, joinMessage);
+						//replaymessage to rejoin
+						std::string replayMessage = ":" + it->second.getNickname() + "!" + getServername() + " JOIN " + parsedCommand[1] + "\r\n";
+						_sendMessage(client, replayMessage);
+						//who
+						_whoServer(it->second,parsedCommand);
+
+
+						//
 						std::cout<<"Mensaje de join a canal Ya creado????"<<std::endl;
+
 					}
+					//Todos los clientes que hay, nos tienen que mandar un mensaje para entrar en nuestro chat
 
 				}
 			}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 18:22:54 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/01 17:47:45 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/02 15:56:08 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@
 # define ERR_NOTEXTTOSEND(servername)(std::string(":" + servername + " 412 :No text to send"))
 # define ERR_CANNOTSENDTOCHAN(servername, channel)(std::string(":" + servername + " 412 " + channel + " :Cannot send to channel"))
 # define ERR_NOSUCHNICK(servername, nickname)(std::string(":" + servername + " 401 " + nickname + " :No such nick/channel"))
-    // ERR_TOOMANYTARGETS --dont know if we need it 
-    // RPL_AWAY --dont know if we need it 
+    // ERR_TOOMANYTARGETS --dont know if we need it
+    // RPL_AWAY --dont know if we need it
 
 //INVITE
 // 461 ERR_NEEDMOREPARAMS
@@ -81,4 +81,4 @@
 # define ERR_NOTONCHANNEL(servername, channel)(std::string(":" + servername + " 442 " + channel + " :You're not on that channel"))
 # define ERR_USERONCHANNEL(servername, nickname, channel)(std::string(":" + servername + " 443 " + nickname + " " + channel + " :is already on channel"))
 # define ERR_CHANOPRIVSNEEDED(servername, channel)(std::string(":" + servername + " 482 " + channel + " :You're not channel operator"))
-# define RPL_INVITING(servername, nickname, channel)(std::string(":" + servername + " 341 " + channel + " " + nickname))
+# define RPL_INVITING(servername, nickname, channel,nicknameinvited)(std::string(":" + servername + " 341 " +nickname +" "+ channel + " " + nicknameinvited))
