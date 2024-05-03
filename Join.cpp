@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/02 17:43:31 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/03 21:08:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,21 +105,16 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				//send(client.getFd(),message.c_str(),message.size(),0);
 				nbr = _channelExists((listOfChannels[i])); //find new number
 			}
-
-			//(listOfChannels[i]) = "pop";
 			//(listOfChannels[i]).erase((listOfChannels[i]).begin());
-			// if JOIN is successful, the user is then sent the channel's topic
-			//    (using RPL_TOPIC) and the list of users who are on the channel (using
-			//    RPL_NAMREPLY), which must include the user joining.
 			if (_Channels[nbr].getTopic().empty())
 			{
 				//i dont have topic
-				_sendMessage(client, RPL_NOTOPIC((listOfChannels[i])));
+				_sendMessage(client, RPL_NOTOPIC(getServername(),(listOfChannels[i])));
 			}
 			else
 			{
 				//i have topic
-				_sendMessage(client, RPL_TOPIC((listOfChannels[i]),_Channels[nbr].getTopic()));
+				_sendMessage(client, RPL_TOPIC(getServername(),(listOfChannels[i]),_Channels[nbr].getTopic()));
 			}
 			std::string listOfClients;
 			std::set<int> currentUsers2 = (getChannelbyname(parsedCommand[1])).getMembers();

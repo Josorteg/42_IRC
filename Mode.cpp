@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/03 20:15:11 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/03 21:19:16 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,29 +68,37 @@ void Server::_modeExe(Client &client, Channel &channel, std::vector<std::pair<st
 	}
 }
 
-
 void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 {
 
 	if (parsedCommand.size() < 2)
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
-	// if (parsedCommand.size() == 2)
-	// {
+	if (parsedCommand.size() == 2)
+	{
+		_sendMessage(client,"here i will send you list of actual modes (todo)");
 	// 	//todo 324 and send all actual modes, and maybe parameters 324    RPL_CHANNELMODEIS  "<channel> <mode> <mode params>" todo
 	// 	//reply :irc.example.com 324 your_nick #example-channel +okl user1 password123 10
 	// 	//return(_sendMessage(client, RPL_CHANNELMODEIS(parsedCommand[0])));
-	// }
+		return;
+	}
 	if (!_channelExists((parsedCommand[1])))
 		_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1]));
+
+	Channel channel = getChannelbyname((parsedCommand[1]));
+
+    if (!channel.isMember(client.getFd())) //check if client is member of the channel
+		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), parsedCommand[1])));
+	if (!channel.isOperator(client.getFd())) //check if client is operator
+		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(getServername(), parsedCommand[1])));
 
 	//parse data to vector of pairs
 	/* for example MODE #1 ok+o-tli username password username2 50 
 		creates this vector: < <+o,username>,<+k,password>,<+o,username2>,<-t,empty>,<+l,50>,<+i,empty> >
 	*/
-	Channel channel = getChannelbyname((parsedCommand[1]));
+	
 	std::string flags = parsedCommand[2];
 	std::vector<std::pair<std::string, std::string> > parsedFlags; 
-	const std::string validFlags = "oiklt";
+	const std::string validFlags = "oklit";
 	std::string flag = "+";
 	size_t paramPosition = 3;
 	

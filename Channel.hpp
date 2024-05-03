@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/02 17:42:49 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/03 21:10:52 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ class Channel
 		void set_k(bool k){this->_k = k;};
 		bool get_l(void){return this->_l;};
 		void set_l(bool l){this->_l = l;};
+		bool get_t(void){return this->_t;};
+		void set_t(bool t){this->_t = t;};
 		int getClientLimit(void){return this->_clientLimit;};
 		void setClientLimit(int limit){this->_clientLimit = limit;};
 
@@ -64,5 +66,6 @@ class Channel
 		bool	_i;
 		bool	_k;
 		bool	_l;
+		bool	_t;
 		int	_clientLimit;
 };
