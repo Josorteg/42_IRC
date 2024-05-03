@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/01 16:56:12 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/03 20:16:48 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,6 @@ class Server
 		void _nickServer(Client &client, std::vector<std::string> parsedCommand);
 		void _userServer(Client &client, std::vector<std::string> parsedCommand);
 		void _joinServer(Client &client, std::vector<std::string> parsedCommand);
-		void _modeServer(Client &client, std::vector<std::string> parsedCommand);
-
 		void _whoServer(Client &client, std::vector<std::string> parsedCommand);
 		void _privmsgServer(Client &client, std::vector<std::string> parsedCommand);
 		void _isonServer(Client &client, std::vector<std::string> parsedCommand);
@@ -59,6 +57,16 @@ class Server
 		//MSG
 		void _handleMessageToUser(Client &client, std::string receiver, std::string message);
 		void _handleMessageToChannel(Client &client, std::string receiver, std::string message);
+
+		//MODE
+		void _modeServer(Client &client, std::vector<std::string> parsedCommand);
+		void _modeExe(Client &client, Channel &channel, std::vector<std::pair<std::string, std::string> > parsedFlag);
+		void _modeHandleOperatorPrivileges (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag);
+		void _modeHandlePassword (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag);
+		void _modeHandleLimit (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag);
+		void _modeHandleInviteOnly (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag);
+		void _modeHandleTopic (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag);
+
 
 		//Clients
 

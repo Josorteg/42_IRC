@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 18:22:54 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/02 15:56:08 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/03 19:28:37 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,20 @@
                 //   another channel.
 
 
-//mode (inicial)
+//MODE
+  //461 ERR_NEEDMOREPARAMS
+  //324    RPL_CHANNELMODEIS  "<channel> <mode> <mode params>" todo
+
+/*                ERR_KEYSET
+           ERR_NOCHANMODES                 ERR_CHANOPRIVSNEEDED
+           ERR_USERNOTINCHANNEL            ERR_UNKNOWNMODE
+           
+           RPL_BANLIST                     
+           RPL_EXCEPTLIST                  RPL_ENDOFEXCEPTLIST
+           RPL_INVITELIST                  RPL_ENDOFINVITELIST
+           RPL_UNIQOPIS
+*/
+           
 //
 //OLD 324
 //# define RPL_CHANNELMODEIS(channel,modo,parameter)(std::string("324 " + channel + " " + modo + " " + parameter))
