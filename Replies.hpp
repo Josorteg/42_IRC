@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 18:22:54 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 16:30:42 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:22:41 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 
 //join
 # define ERR_NOSUCHCHANNEL(channel) (std::string("403 " + channel + " :No such channel"))
-# define ERR_CHANNELISFULL(channel) (std::string("471 " + channel + " :Cannot join channel (+l)"))
+# define ERR_CHANNELISFULL(servername,channel) (std::string(":" + servername + " 471 " + channel + " :Cannot join channel (+l)"))
 # define ERR_INVITEONLYCHAN(channel) (std::string("473 " + channel + " :Cannot join channel (+i)"))
 # define ERR_BADCHANNELKEY(channel) (std::string("475 " + channel + " :Cannot join channel (+k)"))
 # define RPL_NOTOPIC(servername,channel) (std::string(":" + servername + " 331 " + channel + " :No topic is set"))

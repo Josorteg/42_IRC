@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 09:51:39 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 16:26:51 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:41:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,8 @@ void Server::_whoServer(Client &client, std::vector<std::string> parsedCommand)
 	//(parsedCommand[1]).erase(((parsedCommand[1]).begin()));
 	if (_channelExists(parsedCommand[1]) > 0)
 	{
-		std::set<int> currentUsers;
-		Channel& channel = getChannelbyname((parsedCommand[1]));
-		currentUsers = channel.getMembers();
+		Channel& channel = _getChannelbyname((parsedCommand[1]));
+		std::set<int> currentUsers = channel.getMembers();
 		for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
 		{
 			int a= *i;

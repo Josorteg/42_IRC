@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 16:57:13 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/04 16:25:01 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:41:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void Server::_inviteServer(Client &client, std::vector<std::string> parsedComman
 	if (!_channelExists(parsedCommand[2]))
 		return(_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[0])));
 
-	Channel& channel = getChannelbyname((parsedCommand[2]));
+	Channel& channel = _getChannelbyname((parsedCommand[2]));
     int invitedClientFd = _getClientfdByName(parsedCommand[1]);
 
     if (invitedClientFd == 0) //check if invited client exists

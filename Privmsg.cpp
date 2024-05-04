@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 16:26:35 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:41:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void Server::_handleMessageToChannel(Client &client, std::string receiver, std::
 	if (!_channelExists(receiver))
 		return(_sendMessage(client, ERR_NOSUCHCHANNEL((receiver))));
 
-	Channel& channel = getChannelbyname(receiver);
+	Channel& channel = _getChannelbyname(receiver);
 	std::set<int> listOfMembers = channel.getMembers();
 	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
 

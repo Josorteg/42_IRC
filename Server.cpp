@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 16:24:38 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:07:41 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,24 +236,13 @@ std::vector<std::string>  Server::_splitString(std::string line, std::string del
 
 void  Server::ProcessCommand(std::string command, int fd)
 {
-	//hi Jose this is for you, here you have as an input whole 1 command in line
-
-	std::vector<std::string> parsedCommand; //vector of commands
-	parsedCommand = _splitString(command, ' ');  // i also split here command the vector by space, so we can easily check any part of command if necessary
-
-	// std::cout<<"---fd: "<< fd;
-	// std::cout<<"---Hello here is time to process this command: "<<command<<std::endl;
-	// std::cout<<"---and here is first word of this command: "<<parsedCommand[0]<<std::endl;
-
-	//find client again
+	std::vector<std::string> parsedCommand;
+	parsedCommand = _splitString(command, ' ');
+	
 	std::map<int, Client>::iterator it = _Clients.find(fd);
 	if (it != _Clients.end())
 	{
-		std::cout<<"---fd: "<< fd;
 		std::cout<<"---Hello here is time to process this command: "<<command<<"|"<<std::endl;
-		std::cout<<"---and here is first word of this command: "<<parsedCommand[0]<<std::endl;
-
-		//for now i only saved nickname
 		if (parsedCommand[0] == "CAP")
 		{
 			return;
@@ -270,7 +259,6 @@ void  Server::ProcessCommand(std::string command, int fd)
 		}
 		else
 		{
-
 			if (it->second.getHasPassword())
 				_exe(it->second, parsedCommand);
 			else
@@ -279,15 +267,8 @@ void  Server::ProcessCommand(std::string command, int fd)
 				_rmClient(it->second);
 			}
 		}
-
-
-
-
 	}
 }
-
-
-
 
 void Server::_rmClient(const Client &c)
 {
@@ -335,7 +316,6 @@ void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 
 	 for (int i = 0; i < 11; i++)
 	 {
-		std::cout<<"_exe i: "<<i << " for command " << parsedCommand[0]<<std::endl;
 		if (parsedCommand[0] == cmds[i])
 		{
 			std::cout<<"going to function for command "<<cmds[i]<<std::endl;
@@ -377,15 +357,12 @@ size_t Server::_channelExists(std::string name)
 	return(0);
 }
 
-Channel& Server::getChannelbyname(std::string name)
+Channel& Server::_getChannelbyname(std::string name)
 {
 	int i = 0;
 	while (name != _Channels[i].getName())
-	{
 		i++;
-	}
 	return (_Channels[i]);
-
 }
 
 int Server::_getClientfdByName(std::string name)
@@ -416,4 +393,27 @@ void Server::_sendMessage(Channel &channel,int clientFdException, std::string me
 		if (clientFdException == 0 || memberFd != clientFdException)
 			send(memberFd,message.c_str(),message.size(),0);
 	}
+}
+
+std::string Server::_getChannelMembersTxt(Channel &channel, std::string delimiter, bool withSymbol)
+{
+	std::set<int> listOfMembers = channel.getMembers();
+	std::string listOfClients;
+
+	for (std::set<int>::iterator i = listOfMembers.begin(); i != listOfMembers.end(); ++i)
+	{
+		int a= *i;
+		std::map<int, Client>::iterator it = _Clients.find(a);
+		
+		if (withSymbol == 1)
+		{
+			if (channel.isOperator(it->second.getFd()))
+				listOfClients += "@";
+			else
+				listOfClients += "+";	
+		}
+		listOfClients += it->second.getNickname() + delimiter;
+	}
+	listOfClients.erase(listOfClients.end()-1);
+	return listOfClients;
 }

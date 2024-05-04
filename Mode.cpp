@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 16:26:31 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:41:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 	if (!_channelExists((parsedCommand[1])))
 		_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1]));
 
-	Channel& channel = getChannelbyname((parsedCommand[1]));
+	Channel& channel = _getChannelbyname((parsedCommand[1]));
 
     if (!channel.isMember(client.getFd())) //check if client is member of the channel
 		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), parsedCommand[1])));

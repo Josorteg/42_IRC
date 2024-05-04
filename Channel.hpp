@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 15:29:55 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:04:28 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ class Channel
 	public:
 		Channel (Server *serv,std::string name,Client &client);
 		~Channel(void);
-		bool _nameCheck(std::string name);
 		std::string getName(void) const {return this->_name;};
 		void setName(std::string name) {this->_name = name;};
 

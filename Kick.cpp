@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:43:50 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/04 16:26:27 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:41:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
     {
         if (!_channelExists(listOfChannels[0]))
 	    	return(_sendMessage(client, ERR_NOSUCHCHANNEL(listOfChannels[0])));
-        Channel& channel = getChannelbyname(listOfChannels[0]);
+        Channel& channel = _getChannelbyname(listOfChannels[0]);
         std::set<int> listOfMembers = channel.getMembers();		
         if (!channel.isMember(client.getFd()))
 			return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), channel.getName())));
@@ -61,7 +61,7 @@ void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
 				_sendMessage(client, ERR_NOSUCHCHANNEL(listOfChannels[i]));
 				continue;
 			}
-			Channel& channel = getChannelbyname(listOfChannels[i]);
+			Channel& channel = _getChannelbyname(listOfChannels[i]);
 			std::set<int> listOfMembers = channel.getMembers();
 			if (!channel.isMember(client.getFd()))
 			{

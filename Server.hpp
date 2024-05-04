@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 16:24:45 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 18:32:03 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,11 @@ class Server
 
 		//Channels
 		size_t _channelExists(std::string name);
-		Channel& getChannelbyname(std::string name);
+		Channel& _getChannelbyname(std::string name);
 		int _getClientfdByName(std::string name);
+		void _joinNewChannel(Client &client, std::string channelName);
+		void _joinExistingChannel(Client &client, Channel &channel);
+		std::string _getChannelMembersTxt(Channel &channel,std::string delimiter, bool withSymbol);
 
 		//MSG
 		void _handleMessageToUser(Client &client, std::string receiver, std::string message);

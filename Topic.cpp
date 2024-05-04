@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:40:20 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/04 16:26:39 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 17:41:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand
 	if (!_channelExists(parsedCommand[1]))
 		return(_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[0])));
 	
-	Channel& channel = getChannelbyname((parsedCommand[1]));
+	Channel& channel = _getChannelbyname((parsedCommand[1]));
 	std::set<int> listOfMembers = channel.getMembers();
 	std::string topic = "";
 	for (size_t j = 2;j < parsedCommand.size();j++)
