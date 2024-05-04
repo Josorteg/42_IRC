@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/02 14:24:53 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:26:35 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,45 +40,24 @@ void Server::_handleMessageToUser(Client &client, std::string receiver, std::str
 {
 	int clientToSendMessageFd = _getClientfdByName(receiver);
 	if (clientToSendMessageFd == 0)
-		_sendMessage(client, ERR_NOSUCHNICK(getServername(), receiver));
-	else
-	{
-		message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
-		std::map<int, Client>::iterator it = _Clients.find(clientToSendMessageFd);
-		_sendMessage(it->second, message);
-	}
+		return(_sendMessage(client, ERR_NOSUCHNICK(getServername(), receiver)));
+	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
+	std::map<int, Client>::iterator it = _Clients.find(clientToSendMessageFd);
+	_sendMessage(it->second, message);
 }
 
 void Server::_handleMessageToChannel(Client &client, std::string receiver, std::string message)
 {
-	size_t nbr = _channelExists((receiver));
-	if (nbr)
-	{
-		std::set<int> listOfMembers = getChannelbyname(receiver).getMembers();
-		message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
+	if (!_channelExists(receiver))
+		return(_sendMessage(client, ERR_NOSUCHCHANNEL((receiver))));
 
-		std::set<int>::iterator it = listOfMembers.find(client.getFd()); //check if client is in channel
-		if (it == listOfMembers.end())
-			_sendMessage(client, ERR_CANNOTSENDTOCHAN(getServername(), receiver));
-		else //if sender is in channel
-		{
-			for (std::set<int>::iterator it = listOfMembers.begin(); it != listOfMembers.end(); ++it)
-			{
-				int memberFd= *it;
-				if (memberFd == client.getFd())
-					; //i dont send to myself because then i see the message in my channel twice.
-				else
-				{
-					std::map<int, Client>::iterator i = _Clients.find(memberFd);
-					std::cout<<"client: "<<memberFd<<"message: "<<message<<std::endl;
-					_sendMessage(i->second, message);
-				}
+	Channel& channel = getChannelbyname(receiver);
+	std::set<int> listOfMembers = channel.getMembers();
+	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
 
-			}
-		}
-	}
-	else
-		_sendMessage(client, ERR_NOSUCHCHANNEL((receiver)));
+	if (!channel.isMember(client.getFd()))
+		return(_sendMessage(client, ERR_CANNOTSENDTOCHAN(getServername(), receiver)));
+	_sendMessage(channel,client.getFd(),message);
 }
 
 void Server::_isonServer(Client &client, std::vector<std::string> parsedCommand)

@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/03 20:16:48 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:24:45 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Server
 
 		void setTime(void);
 		void _sendMessage(Client &client,std::string message);
+		void _sendMessage(Channel &channel,int clientFdException, std::string message);
 		void _exe(Client &client, std::vector<std::string> parsedCommand);
 		void _passServer(Client &client,std::string pass);
 		void _nickServer(Client &client, std::vector<std::string> parsedCommand);
@@ -48,10 +49,13 @@ class Server
 		void _privmsgServer(Client &client, std::vector<std::string> parsedCommand);
 		void _isonServer(Client &client, std::vector<std::string> parsedCommand);
 		void _inviteServer(Client &client, std::vector<std::string> parsedCommand);
+		void _topicServer(Client &client, std::vector<std::string> parsedCommand);
+		void _kickServer(Client &client, std::vector<std::string> parsedCommand);
+		void _pingServer(Client &client, std::vector<std::string> parsedCommand);
 
 		//Channels
 		size_t _channelExists(std::string name);
-		Channel getChannelbyname(std::string name);
+		Channel& getChannelbyname(std::string name);
 		int _getClientfdByName(std::string name);
 
 		//MSG
@@ -67,8 +71,8 @@ class Server
 		void _modeHandleInviteOnly (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag);
 		void _modeHandleTopic (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag);
 
-
-		//Clients
+		//KICK
+		void _kickUser(Channel &channel, Client &client, std::string nickname, std::string comment);
 
 		std::map<int, Client> _Clients;
 		std::vector<pollfd> _pollFds;

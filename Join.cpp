@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/03 21:08:18 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:26:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 					_Channels[nbr].addMember(client);
 					std::set<int> currentUsers;
 					std::string joinMessage = ":" + client.getNickname() + "!" + getServername() + " JOIN " + parsedCommand[1] + "\r\n";
-					currentUsers = (getChannelbyname(parsedCommand[1])).getMembers();
+					Channel& channel = getChannelbyname((parsedCommand[1]));
+					currentUsers = channel.getMembers();
 					//mandamos mensajes join a todos los clientes con usuarios del canal de que hemos llegado!!
 					for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
 					{
@@ -93,7 +94,8 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				_Channels.push_back(newChannel);
 				std::set<int> currentUsers;
 				std::string joinMessage = ":" + client.getNickname() + "!" + getServername() + " JOIN " + parsedCommand[1] + "\r\n";
-				currentUsers = (getChannelbyname(parsedCommand[1])).getMembers();
+				Channel& channel = getChannelbyname((parsedCommand[1]));
+				currentUsers = channel.getMembers();
 				for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
 				{
 					std::cout<<"Mensaje de join a canal nuevo!!!!!!!!!!!!!!!!!!!"<<std::endl;
@@ -117,7 +119,8 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				_sendMessage(client, RPL_TOPIC(getServername(),(listOfChannels[i]),_Channels[nbr].getTopic()));
 			}
 			std::string listOfClients;
-			std::set<int> currentUsers2 = (getChannelbyname(parsedCommand[1])).getMembers();
+			Channel& channel = getChannelbyname((parsedCommand[1]));
+			std::set<int> currentUsers2 = channel.getMembers();
 			for (std::set<int>::iterator i = currentUsers2.begin(); i != currentUsers2.end(); ++i)
 			{
 				int a= *i;

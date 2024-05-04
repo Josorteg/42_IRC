@@ -6,7 +6,7 @@
 #    By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/05/03 20:10:52 by mmoramov         ###   ########.fr        #
+#    Updated: 2024/05/04 13:47:36 by mmoramov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ CFLAGS = -Werror -Wextra -Wall -std=c++98
 #########
 
 #########
-FILES = main Server Client Nick User Join Channel Whonames Mode Privmsg Invite ModeFlagI ModeFlagK ModeFlagT ModeFlagO ModeFlagL
+FILES = main Server Client Nick User Join Channel Whonames Mode Privmsg Invite ModeFlagI ModeFlagK ModeFlagT ModeFlagO ModeFlagL Topic Kick Ping
 
 SRC = $(addsuffix .cpp, $(FILES))
 

@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/03 21:10:52 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 15:29:55 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ class Channel
 		void addMember(Client client);
 		void addOperator(Client client);
 		void addInvited(Client client);
-		//void addOperator(Client client){this->_operators.insert(client.getFd());};
-		//void addOperator(Client client){this->_operators.insert(client.getFd());};
-		//void addOperator(Client client);//??
+		void removeMember(Client client);
+		void removeOperator(Client client);
+		void removeInvited(Client client);
 		std::set<int> getOperators(void){return this->_operators;};
 		std::set<int> getInvited(void){return this->_invited;};
 		std::set<int> getMembers(void){return this->_members;};

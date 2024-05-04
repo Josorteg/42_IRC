@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/01 16:57:01 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:24:38 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,14 +324,16 @@ void Server::_passServer(Client &client,std::string pass)
 }
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
-	std::string cmds[8] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE"};//,
-	 //"TOPIC", "NAMES", "KICK", "PING" };
-	void	(Server::*f[8])(Client &client, std::vector<std::string> parsedCommand) = \
-	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, &Server::_modeServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer};
-	 // &Server::_topic, &Server::_names,
+	std::string cmds[11] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE", "TOPIC", "KICK", "PING"};
+// "NAMES", };
+	void	(Server::*f[11])(Client &client, std::vector<std::string> parsedCommand) = \
+	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, \
+	 &Server::_modeServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer, \
+	 &Server::_topicServer, &Server::_kickServer, &Server::_pingServer};
+	 // &Server::_names,
 	 //&Server::_mode, &Server::_kick, &Server::_ping };
 
-	 for (int i = 0; i < 8; i++)
+	 for (int i = 0; i < 11; i++)
 	 {
 		std::cout<<"_exe i: "<<i << " for command " << parsedCommand[0]<<std::endl;
 		if (parsedCommand[0] == cmds[i])
@@ -375,7 +377,7 @@ size_t Server::_channelExists(std::string name)
 	return(0);
 }
 
-Channel Server::getChannelbyname(std::string name)
+Channel& Server::getChannelbyname(std::string name)
 {
 	int i = 0;
 	while (name != _Channels[i].getName())
@@ -400,4 +402,18 @@ void Server::_sendMessage(Client &client,std::string message)
 {
 	message += "\r\n";
 	send(client.getFd(),message.c_str(),message.size(),0);
+}
+
+void Server::_sendMessage(Channel &channel,int clientFdException, std::string message)
+{
+	//sends message to all clients in the channel. If client fd exception is not 0 i send to everyone except this client
+	std::set<int> listOfMembers = channel.getMembers();
+	message += "\r\n";
+	
+	for (std::set<int>::iterator it = listOfMembers.begin(); it != listOfMembers.end(); ++it)
+	{
+		int memberFd= *it;
+		if (clientFdException == 0 || memberFd != clientFdException)
+			send(memberFd,message.c_str(),message.size(),0);
+	}
 }

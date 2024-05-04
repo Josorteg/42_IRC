@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:44:04 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/03 21:44:47 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 13:58:21 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,10 @@ void Server::_modeHandlePassword (Client &client, Channel &channel, std::pair<st
 
     std::string command = "MODE"; //I will change this
 
-    if (parsedFlag.second == "empty")
-        return(_sendMessage(client, ERR_NEEDMOREPARAMS(command)));
-    
     if (parsedFlag.first[0] == '+')
     {
         if (parsedFlag.second == channel.getPassword())
-            return(_sendMessage(client, ERR_KEYSET(command)));
+            return(_sendMessage(client, ERR_KEYSET(getServername(),command)));
         
         channel.set_k(true);
         channel.setPassword(parsedFlag.second);

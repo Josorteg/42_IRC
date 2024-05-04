@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/03 21:19:16 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:26:31 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void Server::_modeExe(Client &client, Channel &channel, std::vector<std::pair<st
 		{
 			if (parsedFlags[i].first[1] == cmds[j][0]) //example: <+o,username> - parsedFlags[i].first is "+o" and I take [1] which is "o"
 			{
-				std::cout<<"going to function for mode command "<< cmds[j]<<std::endl;
 				(this->*fn[j])(client, channel, parsedFlags[i]);
 				break;
 			}
@@ -84,7 +83,7 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 	if (!_channelExists((parsedCommand[1])))
 		_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1]));
 
-	Channel channel = getChannelbyname((parsedCommand[1]));
+	Channel& channel = getChannelbyname((parsedCommand[1]));
 
     if (!channel.isMember(client.getFd())) //check if client is member of the channel
 		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), parsedCommand[1])));
@@ -115,19 +114,18 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 				if (paramPosition < parsedCommand.size())
 					parsedFlags.push_back(std::make_pair(flag, parsedCommand[paramPosition++]));
 				else
-					std::cout<<"MODES ERROR, not enough parameters provided"<<std::endl;
+					_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0]));
 			}
 			else
-			{
 				parsedFlags.push_back(std::make_pair(flag, "empty"));
-			}
 		}
 		else
 		{
-			std::cout<<"We dont handle this flag " << std::endl;
-		}	
+			flag += flags[i];
+			_sendMessage(client, ERR_UNKNOWNMODE(getServername(),parsedCommand[1],flag));
+		}
 	}
-	//print, delete later
+	//just print, (delete later)
 	for (size_t i = 0; i < parsedFlags.size(); ++i)
 	{
 		std::cout << "Flag: " << parsedFlags[i].first << ", Parameter: " << parsedFlags[i].second << std::endl;

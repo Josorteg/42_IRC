@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:06 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/02 17:42:43 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/04 16:32:48 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ Channel::Channel(Server *serv,std::string name,Client &client)
 	_i = false;
 	_k = false;
 	_l = false;
-	_topic = "life";
 }
 
 bool Channel::_nameCheck(std::string name)
@@ -38,16 +37,35 @@ bool Channel::_nameCheck(std::string name)
 		return false;
 	return true;
 }
+
 void Channel::addMember(Client client)
 {
 	this->_members.insert(client.getFd());
 }
+
 void Channel::addOperator(Client client)
 {
 	this->_operators.insert(client.getFd());
 }
+
 void Channel::addInvited(Client client)
 {
 	this->_invited.insert(client.getFd());
 }
+
+void Channel::removeMember(Client client)
+{
+	this->_members.erase(client.getFd());
+}
+
+void Channel::removeInvited(Client client)
+{
+	this->_invited.erase(client.getFd());
+}
+
+void Channel::removeOperator(Client client)
+{
+	this->_operators.erase(client.getFd());
+}
+
 Channel::~Channel(void){}
