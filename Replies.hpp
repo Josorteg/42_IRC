@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Replies.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 18:22:54 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 18:22:41 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/05 19:27:28 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 # define RPL_TOPIC(servername,channel,topic) (std::string(":" + servername +"332 " + channel + topic))
 # define RPL_NAMREPLY(servername,nickname,channel,clientlist)(std::string(":" + servername + " 353 " + nickname + " = " + channel + " :" + clientlist))
 # define RPL_ENDOFNAMES(channel) (std::string("366 bye " + channel + " : End of /NAMES list"))
-   
+
 //405 ERR_TOOMANYCHANNELS // "<channel name> :You have joined too many
                         // channels"
                 // - Sent to a user when they have joined the maximum
@@ -50,8 +50,8 @@
 # define ERR_KEYSET(servername,channel) (std::string(":" + servername + " 467 " + channel + " :Channel key already set"))
 # define ERR_UNKNOWNMODE(servername,channel, flag) (std::string(":" + servername + " 472 " + flag + " :is unknown mode char to me for " + channel))
 
-/*                
-           RPL_BANLIST                     
+/*
+           RPL_BANLIST
            RPL_EXCEPTLIST                  RPL_ENDOFEXCEPTLIST
            RPL_INVITELIST                  RPL_ENDOFINVITELIST
            RPL_UNIQOPIS

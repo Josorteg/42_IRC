@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 18:07:41 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/05 19:13:51 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ void  Server::ProcessCommand(std::string command, int fd)
 {
 	std::vector<std::string> parsedCommand;
 	parsedCommand = _splitString(command, ' ');
-	
+
 	std::map<int, Client>::iterator it = _Clients.find(fd);
 	if (it != _Clients.end())
 	{
@@ -386,7 +386,7 @@ void Server::_sendMessage(Channel &channel,int clientFdException, std::string me
 	//sends message to all clients in the channel. If client fd exception is not 0 i send to everyone except this client
 	std::set<int> listOfMembers = channel.getMembers();
 	message += "\r\n";
-	
+
 	for (std::set<int>::iterator it = listOfMembers.begin(); it != listOfMembers.end(); ++it)
 	{
 		int memberFd= *it;
@@ -404,13 +404,13 @@ std::string Server::_getChannelMembersTxt(Channel &channel, std::string delimite
 	{
 		int a= *i;
 		std::map<int, Client>::iterator it = _Clients.find(a);
-		
+
 		if (withSymbol == 1)
 		{
 			if (channel.isOperator(it->second.getFd()))
 				listOfClients += "@";
-			else
-				listOfClients += "+";	
+			//else
+			//	listOfClients += "+";
 		}
 		listOfClients += it->second.getNickname() + delimiter;
 	}

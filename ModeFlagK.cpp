@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ModeFlagK.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:44:04 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/04 13:58:21 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/05 16:09:56 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,24 +23,17 @@ void Server::_modeHandlePassword (Client &client, Channel &channel, std::pair<st
     {
         if (parsedFlag.second == channel.getPassword())
             return(_sendMessage(client, ERR_KEYSET(getServername(),command)));
-        
+
         channel.set_k(true);
         channel.setPassword(parsedFlag.second);
-        parsedFlag.first.append(" ").append(parsedFlag.second); //from <+k, 123> i make <+k 123,123> for send in RPL_CHANNELMODEIS
     }
     else
     {
-        //if (parsedFlag.second != "*" && parsedFlag.second != channel.getPassword()) -i dont think we need this    
+        //if (parsedFlag.second != "*" && parsedFlag.second != channel.getPassword()) -i dont think we need this
         channel.set_k(false);
         channel.setPassword("");
     }
-
-    std::set<int> currentUsers;
-	currentUsers = channel.getMembers();
-	for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
-	{
-		int a= *i;
-		std::map<int, Client>::iterator it = _Clients.find(a);
-        _sendMessage(it->second, RPL_CHANNELMODEIS(getServername(),client.getNickname(),channel.getName(), parsedFlag.first));
-	}
+    if (parsedFlag.second != "empty")
+        parsedFlag.first.append(" ").append(parsedFlag.second);
+    _sendMessage(channel,0, RPL_CHANNELMODEIS(getServername(),client.getNickname(),channel.getName(), parsedFlag.first));
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 17:41:18 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/05 19:26:55 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,18 @@
 	MODE #example-channel +k password
 	MODE #example-channel -k *
 	MODE #42 -k password
-	
+
 	MODE #example-channel +l 10
 
 	FLAGS WITHOUT parameter
 	MODE #example-channel -l
-	
+
 	MODE #example-channel +i
 	MODE #example-channel -i
-	
+
 	MODE #example-channel +t
 	MODE #example-channel -t
-	
+
 	Note that there is a maximum limit of three (3) changes per command for modes that take a parameter.
 	 Parameters: <channel> *( ( "-" / "+" ) *<modes> *<modeparams> )
 	*/
@@ -48,9 +48,9 @@ void Server::_modeExe(Client &client, Channel &channel, std::vector<std::pair<st
 	std::string cmds[5] = {"o", "k", "l", "i", "t"};
 	void (Server::*fn[5])(Client&, Channel&, std::pair<std::string, std::string>) = {
 		&Server::_modeHandleOperatorPrivileges,
-		&Server::_modeHandlePassword, 
+		&Server::_modeHandlePassword,
 		&Server::_modeHandleLimit,
-		&Server::_modeHandleInviteOnly, 
+		&Server::_modeHandleInviteOnly,
 		&Server::_modeHandleTopic
 	};
 
@@ -91,16 +91,16 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(getServername(), parsedCommand[1])));
 
 	//parse data to vector of pairs
-	/* for example MODE #1 ok+o-tli username password username2 50 
+	/* for example MODE #1 ok+o-tli username password username2 50
 		creates this vector: < <+o,username>,<+k,password>,<+o,username2>,<-t,empty>,<+l,50>,<+i,empty> >
 	*/
-	
+
 	std::string flags = parsedCommand[2];
-	std::vector<std::pair<std::string, std::string> > parsedFlags; 
+	std::vector<std::pair<std::string, std::string> > parsedFlags;
 	const std::string validFlags = "oklit";
 	std::string flag = "+";
 	size_t paramPosition = 3;
-	
+
 	for (size_t i = 0; i < flags.length(); ++i)
 	{
 		flag = "+";
@@ -130,6 +130,6 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 	{
 		std::cout << "Flag: " << parsedFlags[i].first << ", Parameter: " << parsedFlags[i].second << std::endl;
 	}
-	//now lets call proper functions 
+	//now lets call proper functions
 	_modeExe(client, channel, parsedFlags);
 }
