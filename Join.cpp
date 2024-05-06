@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/05 19:36:26 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/06 17:17:07 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static bool	nameChecker(std::string name)
 	return true;
 }
 
-void Server::_joinExistingChannel(Client &client, Channel &channel)
+bool Server::_joinExistingChannel(Client &client, Channel &channel)
 {
 	std::set<int> listOfMembers = channel.getMembers();
 	std::string message;
@@ -58,7 +58,7 @@ void Server::_joinExistingChannel(Client &client, Channel &channel)
 	if(channel.getInvited().find(client.getFd()) == channel.getInvited().end())
 		std::cout<<"CHANNEL: DIDNT FOUND CLIENT IN INVITED" <<std::endl;
 	else if (channel.getInvited().find(client.getFd()) != channel.getInvited().end())
-			std::cout<<"CHANNEL: FOUND CLIENT IN INVITED" <<std::endl;
+		std::cout<<"CHANNEL: FOUND CLIENT IN INVITED" <<std::endl;
 
 
 	// Example: find if the set contains the value 6
@@ -71,15 +71,24 @@ void Server::_joinExistingChannel(Client &client, Channel &channel)
     } else {
         // Didn't find the value in the set
         std::cout << valueToFind << " not found in the set.\n";
+
     }
 
 	std::set<int> listOfInvited = channel.getInvited();
 	std::set<int>::iterator itInvited = listOfInvited.find(client.getFd());
 	if (channel.get_l() && static_cast<int>(channel.getMembers().size()) == channel.getClientLimit())
-		return(_sendMessage(client, ERR_CHANNELISFULL(getServername(),channel.getName())));
+	{
+		_sendMessage(client, ERR_CHANNELISFULL(getServername(),channel.getName()));
+		return (false);
+	}
+
 	//if (channel.get_i() && channel.getInvited().find(client.getFd()) == channel.getInvited().end())
 	if (channel.get_i() && itInvited == listOfInvited.end())
-		return(_sendMessage(client, ERR_INVITEONLYCHAN(channel.getName())));
+	{
+		std::cout<<"ERROR INVITACION"<<std::endl;
+		_sendMessage(client, ERR_INVITEONLYCHAN(channel.getName()));
+		return (false);
+	}
 	channel.addMember(client);
 
 	message = ":" + client.getNickname() + "!~" + getServername() + " JOIN " + channel.getName();
@@ -95,6 +104,7 @@ void Server::_joinExistingChannel(Client &client, Channel &channel)
 		std::map<int, Client>::iterator it = _Clients.find(a);
 		_whoServer(it->second,whoParsedCommand);
 	}
+	return (true);
 }
 
 void Server::_joinNewChannel(Client &client, std::string channelName)
@@ -118,6 +128,7 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 		keyChannels = _splitString(parsedCommand[2], ',');
 	for (size_t i = 0; i < listOfChannels.size(); ++i)
 	{
+		int error = 0;
 		if (!nameChecker(listOfChannels[i]))
 		{
 			_sendMessage(client, ERR_NOSUCHCHANNEL((listOfChannels[i]))); //its correct errror?
@@ -130,24 +141,33 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 			if (existingChannel.get_k() && (keyChannels.size() < i || existingChannel.getPassword() != keyChannels[i]))
 				return(_sendMessage(client, ERR_BADCHANNELKEY(listOfChannels[i])));
 			std::cout<<"AFTER CHECKING KEY"<<std::endl;
-			_joinExistingChannel(client, existingChannel);
+			if(!_joinExistingChannel(client, existingChannel))
+				error = 1;
 			std::cout<<"AFTER JOINING CHANNEL"<<std::endl;
 
 		}
 		else
 			_joinNewChannel(client, listOfChannels[i]);
 
-		Channel& channel = _getChannelbyname(listOfChannels[i]);
-		std::set<int> listOfMembers = channel.getMembers();
-		std::string listOfClients = _getChannelMembersTxt(channel, " ", 1);
+		/// checkear si esta en el canal, si es que no (return)!!!!!!!!!!!
+		if (error == 0)
+		{
+			Channel& channel = _getChannelbyname(listOfChannels[i]);
+			std::set<int> listOfMembers = channel.getMembers();
+			std::string listOfClients = _getChannelMembersTxt(channel, " ", 1);
 
-		if (channel.getTopic().empty())
-			_sendMessage(client, RPL_NOTOPIC(getServername(),(channel.getName())));
+			if (channel.getTopic().empty())
+				_sendMessage(client, RPL_NOTOPIC(getServername(),(channel.getName())));
+			else
+				_sendMessage(client, RPL_TOPIC(getServername(),channel.getName(),channel.getTopic()));
+
+			//void _sendMessage(Channel &channel,int clientFdException, std::string message);
+			_sendMessage(channel,0, RPL_NAMREPLY(getServername(),client.getNickname(),channel.getName(),listOfClients));
+			_sendMessage(channel,0, RPL_ENDOFNAMES(channel.getName()));
+		}
 		else
-			_sendMessage(client, RPL_TOPIC(getServername(),channel.getName(),channel.getTopic()));
+		;
+			//:irc.example.com NOTICE yourNickname :You have left channel #channel
 
-		//void _sendMessage(Channel &channel,int clientFdException, std::string message);
-		_sendMessage(channel,0, RPL_NAMREPLY(getServername(),client.getNickname(),channel.getName(),listOfClients));
-		_sendMessage(channel,0, RPL_ENDOFNAMES(channel.getName()));
 	}
 }

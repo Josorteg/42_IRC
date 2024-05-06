@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+         #
+#    By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/05/04 13:47:36 by mmoramov         ###   ########.fr        #
+#    Updated: 2024/05/06 18:03:25 by josorteg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,9 +23,10 @@ CFLAGS = -Werror -Wextra -Wall -std=c++98
 #########
 
 #########
-FILES = main Server Client Nick User Join Channel Whonames Mode Privmsg Invite ModeFlagI ModeFlagK ModeFlagT ModeFlagO ModeFlagL Topic Kick Ping
+FILES = main Server Client Nick User Join Channel Whonames Mode Privmsg Invite ModeFlagI ModeFlagK ModeFlagT ModeFlagO ModeFlagL Topic Kick Ping Part
 
 SRC = $(addsuffix .cpp, $(FILES))
+
 
 ##vpath %.cpp
 #########

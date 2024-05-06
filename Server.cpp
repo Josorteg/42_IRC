@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/05 19:13:51 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/06 18:02:37 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,16 +305,16 @@ void Server::_passServer(Client &client,std::string pass)
 }
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
-	std::string cmds[11] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE", "TOPIC", "KICK", "PING"};
+	std::string cmds[12] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART"};
 // "NAMES", };
-	void	(Server::*f[11])(Client &client, std::vector<std::string> parsedCommand) = \
+	void	(Server::*f[12])(Client &client, std::vector<std::string> parsedCommand) = \
 	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, \
 	 &Server::_modeServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer, \
-	 &Server::_topicServer, &Server::_kickServer, &Server::_pingServer};
+	 &Server::_topicServer, &Server::_kickServer, &Server::_pingServer,&Server::_partServer};
 	 // &Server::_names,
 	 //&Server::_mode, &Server::_kick, &Server::_ping };
 
-	 for (int i = 0; i < 11; i++)
+	 for (int i = 0; i < 12; i++)
 	 {
 		if (parsedCommand[0] == cmds[i])
 		{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 18:32:03 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/06 18:02:54 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,14 @@ class Server
 		void _topicServer(Client &client, std::vector<std::string> parsedCommand);
 		void _kickServer(Client &client, std::vector<std::string> parsedCommand);
 		void _pingServer(Client &client, std::vector<std::string> parsedCommand);
+		void _partServer(Client &client, std::vector<std::string> parsedCommand);
 
 		//Channels
 		size_t _channelExists(std::string name);
 		Channel& _getChannelbyname(std::string name);
 		int _getClientfdByName(std::string name);
 		void _joinNewChannel(Client &client, std::string channelName);
-		void _joinExistingChannel(Client &client, Channel &channel);
+		bool _joinExistingChannel(Client &client, Channel &channel);
 		std::string _getChannelMembersTxt(Channel &channel,std::string delimiter, bool withSymbol);
 
 		//MSG

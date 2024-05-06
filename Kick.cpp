@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:43:50 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/05 19:27:01 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/06 18:35:25 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,25 +80,28 @@ void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
 
 void Server::_kickUser(Channel &channel, Client &client, std::string nickname, std::string comment)
 {
+	std::string message;
+
 	int clientFdToKick = _getClientfdByName(nickname);
     if (clientFdToKick == 0)
 		return(_sendMessage(client, ERR_NOSUCHNICK(getServername(), nickname)));
     if (!channel.isMember(clientFdToKick))
     	return(_sendMessage(client, ERR_USERNOTINCHANNEL(getServername(), nickname, channel.getName())));
-	//kick him
-    channel.removeMember(clientFdToKick);
-	channel.removeOperator(clientFdToKick);
-	channel.removeInvited(clientFdToKick);
+
     //send message to all people in channel i kicked him
-	std::string message;
-	message = "KICK " + channel.getName() + " " + nickname + " :You have been kicked from the channel";
+	message =  ":" + client.getNickname() + " KICK " + channel.getName() + " " + nickname + " :You have been kicked from the channel";
 	if (!comment.empty())
 		message += " " + comment;
 	_sendMessage(channel,0,message);
 
-	message = "KICKED " + channel.getName() + " " + nickname + " from channel " +  channel.getName();
+	message =  ":" + client.getNickname() + " KICKED " + channel.getName() + " " + nickname + " from channel " +  channel.getName();
 
 	//send message to the issuer that he kicked
  	_sendMessage(client, message);
+
+	//kick him
+    channel.removeMember(clientFdToKick);
+	channel.removeOperator(clientFdToKick);
+	channel.removeInvited(clientFdToKick);
 
 }
