@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:06 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 18:03:57 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/07 19:57:21 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ Channel::Channel(Server *serv,std::string name,Client &client)
 	_i = false;
 	_k = false;
 	_l = false;
+	_t = false;
 }
 
 void Channel::addMember(Client client)

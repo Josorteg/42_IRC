@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/05 19:26:55 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 20:30:39 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,19 +72,29 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 
 	if (parsedCommand.size() < 2)
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
-	if (parsedCommand.size() == 2)
-	{
-		_sendMessage(client,"here i will send you list of actual modes (todo)");
-	// 	//todo 324 and send all actual modes, and maybe parameters 324    RPL_CHANNELMODEIS  "<channel> <mode> <mode params>" todo
-	// 	//reply :irc.example.com 324 your_nick #example-channel +okl user1 password123 10
-	// 	//return(_sendMessage(client, RPL_CHANNELMODEIS(parsedCommand[0])));
-		return;
-	}
 	if (!_channelExists((parsedCommand[1])))
 		_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1]));
 
 	Channel& channel = _getChannelbyname((parsedCommand[1]));
+	
+	if (parsedCommand.size() == 2)
+	{
+		std::string flags = "";
+		if (channel.get_i())
+			flags += "i";
+		if (channel.get_k())
+			flags += "k";
+		if (channel.get_l())
+			flags += "l";
+		if (channel.get_t())
+			flags += "t";
 
+		std::cout<<"MODE all flags "<< flags << std::endl;
+		
+		_sendMessage(client, RPL_CHANNELMODEIS(getServername(),client.getNickname(),channel.getName(),flags));
+		return;
+	}
+	
     if (!channel.isMember(client.getFd())) //check if client is member of the channel
 		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), parsedCommand[1])));
 	if (!channel.isOperator(client.getFd())) //check if client is operator

@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 11:38:52 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/01 15:49:34 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/07 20:31:31 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,12 @@
 
 void Server::_userServer(Client &client, std::vector<std::string> parsedCommand)
 {
-	//check if username has 5 parameters
-	if (parsedCommand.size()<5)
+	if (parsedCommand.size() < 5)
 	{
 		_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0]));
 		_rmClient(client);
 		return;
 	}
-	//check if client is already registered
 	if (client.getIsRegistered())
 	{
 		_sendMessage(client, ERR_ALREADYREGISTRED());
@@ -34,7 +32,9 @@ void Server::_userServer(Client &client, std::vector<std::string> parsedCommand)
 	client.setUsername(parsedCommand[1]);
 	client.setRealname(parsedCommand[4]);
 	client.setHostname(parsedCommand[1] + "@127.0.0.1");
-	client.setIsRegistered(true);
+
+	if (!client.getNickname().empty() && client.getHasPassword())
+		client.setIsRegistered(true);
 
 	_sendMessage(client, RPL_WELCOME(client.getNickname(), this->getServername() ,client.getHostname()));
 	_sendMessage(client, RPL_YOURHOST(this->getServername(),client.getNickname()));

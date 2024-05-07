@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 16:57:13 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/07 12:26:09 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 20:05:45 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,15 @@ void Server::_inviteServer(Client &client, std::vector<std::string> parsedComman
 	Channel& channel = _getChannelbyname((parsedCommand[2]));
     int invitedClientFd = _getClientfdByName(parsedCommand[1]);
 
-    if (invitedClientFd == 0) //check if invited client exists
+    if (invitedClientFd == 0)
 	     return(_sendMessage(client, ERR_NOSUCHNICK(getServername(), parsedCommand[1])));
-	if (channel.isMember(invitedClientFd) || channel.isInvited(invitedClientFd))  //check if invited client is member of the  channel or is invited
+	if (channel.isMember(invitedClientFd) || channel.isInvited(invitedClientFd))
 		return(_sendMessage(client, ERR_USERONCHANNEL(getServername(), parsedCommand[1], parsedCommand[2])));
-    if (!channel.isMember(client.getFd())) //check if client who is inviting is member of the channel
+    if (!channel.isMember(client.getFd()))
 		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), parsedCommand[2])));
-	if (!channel.isOperator(client.getFd())) //check if client who is inviting is operator
+	if (!channel.isOperator(client.getFd()))
 		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(getServername(), parsedCommand[2])));
 
-	// reply to both users:  <your_nickname> INVITE <target_nickname> :<channel>
 	message = ":" + client.getNickname() + " INVITE " + parsedCommand[1] + " " + parsedCommand[2];
 	std::map<int, Client>::iterator i = _Clients.find(invitedClientFd);
 	channel.addInvited(i->second);

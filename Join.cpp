@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/07 19:17:25 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 20:25:19 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,13 +139,15 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 			if (parsedCommand.size() == 2 && existingChannel.get_k())
 			{
 				std::cout<<"NO KEY!!!!!"<<std::endl;
-				return(_sendMessage(client, ERR_BADCHANNELKEY(client.getNickname(),listOfChannels[i])));
+				_sendMessage(client, ERR_BADCHANNELKEY(client.getNickname(),listOfChannels[i]));
+				continue;
 			}
 			else if (parsedCommand.size() > 2 && ((existingChannel.get_k() && keyChannels.size() < i ) || (existingChannel.getPassword() != keyChannels[i])))
 			{
 				std::cout<<"Bad channel!!!!!"<<std::endl;
-				std::cout<<"Channel : "<<existingChannel.getName()<<"   Password : "<<existingChannel.getPassword()<<"    Key sended : "<<keyChannels[i]<<std::endl;
-				return(_sendMessage(client, ERR_BADCHANNELKEY(client.getNickname(),listOfChannels[i])));
+				std::cout<<"Channel : "<< existingChannel.getName()<<"   Password : "<<existingChannel.getPassword()<<"    Key sended : "<<keyChannels[i]<<std::endl;
+				_sendMessage(client, ERR_BADCHANNELKEY(client.getNickname(),listOfChannels[i]));
+				continue;
 			}
 			std::cout<<"AFTER CHECKING KEY"<<std::endl;
 			if(!_joinExistingChannel(client, existingChannel))
@@ -163,10 +165,9 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 			std::set<int> listOfMembers = channel.getMembers();
 			std::string listOfClients = _getChannelMembersTxt(channel, " ", 1);
 
-			if (channel.getTopic().empty())
-				message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName();
-			else
-				message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName() + channel.getTopic();
+			message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName();		
+			if (!channel.getTopic().empty())
+				message += channel.getTopic();
 			_sendMessage(client, message);
 
 			// if (channel.getTopic().empty())
@@ -175,8 +176,8 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 			// 	_sendMessage(client, RPL_TOPIC(getServername(),channel.getName(),channel.getTopic()));
 
 			//void _sendMessage(Channel &channel,int clientFdException, std::string message);
-			_sendMessage(channel,0, RPL_NAMREPLY(getServername(),client.getNickname(),channel.getName(),listOfClients));
-			_sendMessage(channel,0, RPL_ENDOFNAMES(channel.getName()));
+			_sendMessage(channel, 0, RPL_NAMREPLY(getServername(),client.getNickname(),channel.getName(),listOfClients));
+			_sendMessage(channel, 0, RPL_ENDOFNAMES(channel.getName()));
 		}
 		else
 		;

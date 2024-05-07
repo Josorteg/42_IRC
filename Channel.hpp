@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 18:04:28 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/07 20:04:54 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,24 +21,26 @@ class Channel
 	public:
 		Channel (Server *serv,std::string name,Client &client);
 		~Channel(void);
+		
 		std::string getName(void) const {return this->_name;};
-		void setName(std::string name) {this->_name = name;};
-
 		std::string getPassword(void){return this->_password;};
-		void setPassword(std::string pass){ this->_password = pass;};
 		std::string getTopic(void){return this->_topic;};
-		void setTopic(std::string topic){ this->_topic = topic;};
-		bool get_i(void){return this->_i;};
-		void set_i(bool i){this->_i = i;};
-		bool get_k(void){return this->_k;};
-		void set_k(bool k){this->_k = k;};
-		bool get_l(void){return this->_l;};
-		void set_l(bool l){this->_l = l;};
-		bool get_t(void){return this->_t;};
-		void set_t(bool t){this->_t = t;};
 		int getClientLimit(void){return this->_clientLimit;};
+
+		void setName(std::string name) {this->_name = name;};
+		void setPassword(std::string pass){ this->_password = pass;};
+		void setTopic(std::string topic){ this->_topic = topic;};
 		void setClientLimit(int limit){this->_clientLimit = limit;};
 
+		bool get_i(void){return this->_i;};
+		bool get_k(void){return this->_k;};
+		bool get_l(void){return this->_l;};
+		bool get_t(void){return this->_t;};
+		void set_i(bool i){this->_i = i;};
+		void set_k(bool k){this->_k = k;};
+		void set_l(bool l){this->_l = l;};
+		void set_t(bool t){this->_t = t;};
+		
 		void addMember(Client client);
 		void addOperator(Client client);
 		void addInvited(Client client);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/07 18:59:28 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 20:29:28 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,12 +296,9 @@ void Server::_rmClient(const Client &c)
 	for (std::vector<Channel>::iterator it = listOfChannels.begin(); it != listOfChannels.end(); ++it)
 	{
 		Channel channel = *it;
-		if (channel.isMember(fd))
-			channel.removeMember(fd);
-		if (channel.isInvited(fd))
-			channel.removeInvited(fd);
-		if (channel.isOperator(fd))
-			channel.removeOperator(fd);
+		channel.removeMember(fd);
+		channel.removeInvited(fd);
+		channel.removeOperator(fd);
 	}
 	//delete _Clients[fd];/problema de malloc, no se donde alocamos memoria
 	close(fd);
@@ -324,8 +321,8 @@ bool Server::_passServer(Client &client,std::string pass)
 		return(false);
 		//_rmClient(client);
 	}
-
 }
+
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
 	std::string cmds[12] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART"};
@@ -335,7 +332,9 @@ void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 	 &Server::_modeServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer, \
 	 &Server::_topicServer, &Server::_kickServer, &Server::_pingServer,&Server::_partServer};
 	 // &Server::_names,
-	 //&Server::_mode, &Server::_kick, &Server::_ping };
+
+
+	 ///we should check somewhere if client is registered!!!
 
 	 for (int i = 0; i < 12; i++)
 	 {
@@ -353,19 +352,21 @@ void Server::setTime() {
     std::time_t currentTime = std::time(nullptr);
     std::tm* localTime = std::localtime(&currentTime);
 
-    int year = localTime->tm_year + 1900; // years since 1900
-    int month = localTime->tm_mon + 1;     // months since January (0-based)
-    int day = localTime->tm_mday;          // day of the month (1-31)
-    int hour = localTime->tm_hour;         // hours since midnight (0-23)
-    int minute = localTime->tm_min;        // minutes after the hour (0-59)
-    int second = localTime->tm_sec;        // seconds after the minute (0-61)
-
+    int year = localTime->tm_year + 1900;
+    int month = localTime->tm_mon + 1;
+    int day = localTime->tm_mday;
+    int hour = localTime->tm_hour; 
+    int minute = localTime->tm_min;    
+    int second = localTime->tm_sec;
 
     std::ostringstream oss;
-    oss << year << '-' << month << '-' << day << ' ' << hour << ':' << minute << ':' << second;
+    oss << std::setw(2) << std::setfill('0') << day << '-' 
+		<< std::setw(2) << std::setfill('0') << month << '-' 
+		<< year << ' ' 
+		<< std::setw(2) << std::setfill('0') << hour << ':' 
+		<< std::setw(2) << std::setfill('0') << minute << ':' 
+		<< std::setw(2) << std::setfill('0') << second;
     this->_time = oss.str();
-
-	//make it better
     std::cout << "Current date and time: " << _time << std::endl;
 }
 
@@ -428,13 +429,8 @@ std::string Server::_getChannelMembersTxt(Channel &channel, std::string delimite
 		int a= *i;
 		std::map<int, Client>::iterator it = _Clients.find(a);
 
-		if (withSymbol == 1)
-		{
-			if (channel.isOperator(it->second.getFd()))
+		if (withSymbol == 1 && channel.isOperator(it->second.getFd()))
 				listOfClients += "@";
-			//else
-			//	listOfClients += "+";
-		}
 		listOfClients += it->second.getNickname() + delimiter;
 	}
 	listOfClients.erase(listOfClients.end()-1);

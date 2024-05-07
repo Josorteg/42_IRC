@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 10:04:35 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 16:52:48 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/07 20:02:48 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,6 @@ void Server::_nickServer(Client &client, std::vector<std::string> parsedCommand)
 		message = "Nick was changed to : " + client.getNickname();
 		_sendMessage(client, message);
 	}
+	if (!client.getUsername().empty() && client.getHasPassword())
+		client.setIsRegistered(true);
 }
