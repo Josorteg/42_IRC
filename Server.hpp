@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/06 18:02:54 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 15:51:24 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class Server
 		~Server(void);
 		void SetServer(int port,std::string psw);
 		void RunServer();
-		void ProcessCommand(std::string command, int fd);
+		bool ProcessCommand(std::string command, int fd);
 
 	private:
 
@@ -41,7 +41,7 @@ class Server
 		void _sendMessage(Client &client,std::string message);
 		void _sendMessage(Channel &channel,int clientFdException, std::string message);
 		void _exe(Client &client, std::vector<std::string> parsedCommand);
-		void _passServer(Client &client,std::string pass);
+		bool _passServer(Client &client,std::string pass);
 		void _nickServer(Client &client, std::vector<std::string> parsedCommand);
 		void _userServer(Client &client, std::vector<std::string> parsedCommand);
 		void _joinServer(Client &client, std::vector<std::string> parsedCommand);

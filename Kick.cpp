@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:43:50 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/06 18:35:25 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 12:49:55 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ void Server::_kickUser(Channel &channel, Client &client, std::string nickname, s
     if (!channel.isMember(clientFdToKick))
     	return(_sendMessage(client, ERR_USERNOTINCHANNEL(getServername(), nickname, channel.getName())));
 
+//ERROR WHEN YOU KICK YOURSELF!!!
     //send message to all people in channel i kicked him
 	message =  ":" + client.getNickname() + " KICK " + channel.getName() + " " + nickname + " :You have been kicked from the channel";
 	if (!comment.empty())

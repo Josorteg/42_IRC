@@ -6,15 +6,16 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/06 18:02:37 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 18:59:28 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Includes.hpp"
 
-
 bool sigend = false;
-Server::Server (void){
+
+Server::Server (void)
+{
 	this->_servername = "PapaPitufo";
 	this->setTime();
 }
@@ -82,25 +83,26 @@ void Server::RunServer(void)
 				else
 					_Request(_pollFds[it].fd);
 			}
-			if (_pollFds[it].fd != _serverFd)
-			{
-				std::map<int, Client>::iterator its = _Clients.find(_pollFds[it].fd);
-				std::cout << std::endl<< "RunServer: actual buffer for fd: " << _pollFds[it].fd << ": |" << its->second.getBuffer() << "|"<<std::endl<< std::endl;
-			}
+			// if (_pollFds[it].fd != _serverFd )
+			// {
+			// 	std::map<int, Client>::iterator its = _Clients.find(_pollFds[it].fd);
+			// 	if (its->second.getFd() == _pollFds[it].fd)//problema de los nulls
+			// 		std::cout << std::endl<< "RunServer: actual buffer for fd: " << _pollFds[it].fd << ": |" << its->second.getBuffer() << "|"<<std::endl<< std::endl;
+			// }
 		}
 
 
 	}
 	std::cout<<"Signal detected"<<std::endl;
+
+	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
+   		_rmClient(it->second);
 	for (size_t i = 0; i < _pollFds.size(); ++i)
     {
         close(_pollFds[i].fd);
         _pollFds.erase(_pollFds.begin()+i);
     }
-
-
-
-	//FreeFds();
+	close(_serverFd);
 }
 
 void Server::_NewClient(void)
@@ -165,7 +167,8 @@ void Server::_Request(int fd)
 			{
 				for (size_t i = 0; i < commands.size() - 1; ++i) //process each command (commands.size() - 1 because last one is \r\n or not full command yet)
 				{
-					ProcessCommand(commands[i], fd); // Jose you can continue in this funtion :)
+					if(ProcessCommand(commands[i], fd) == false)
+						return; // Jose you can continue in this funtion :)
 				}
 				//if the last one is delimiter, i need to reset buffer
 				if (commands.back() == "\r\n")
@@ -234,7 +237,7 @@ std::vector<std::string>  Server::_splitString(std::string line, std::string del
 	return lines;
 }
 
-void  Server::ProcessCommand(std::string command, int fd)
+bool Server::ProcessCommand(std::string command, int fd)
 {
 	std::vector<std::string> parsedCommand;
 	parsedCommand = _splitString(command, ' ');
@@ -245,16 +248,20 @@ void  Server::ProcessCommand(std::string command, int fd)
 		std::cout<<"---Hello here is time to process this command: "<<command<<"|"<<std::endl;
 		if (parsedCommand[0] == "CAP")
 		{
-			return;
+			return (true);
 		}
 		if (parsedCommand[0] == "QUIT")
 		{
 			_rmClient(it->second);
-			return;
+			return (false);
 		}
 		if (parsedCommand[0] == "PASS")//mas condiciones falta, chequear la autentificacion
 		{
-			_passServer(it->second,parsedCommand[1]);
+			if (_passServer(it->second,parsedCommand[1]) == false)
+			{
+				_rmClient(it->second);
+				return(false);
+			}
 			//std::cout<<"checking password"<<std::endl;
 		}
 		else
@@ -265,9 +272,11 @@ void  Server::ProcessCommand(std::string command, int fd)
 			{
 				std::cout<<"Incorrect Password"<<std::endl;
 				_rmClient(it->second);
+				return(false);
 			}
 		}
 	}
+	return(true);
 }
 
 void Server::_rmClient(const Client &c)
@@ -281,13 +290,25 @@ void Server::_rmClient(const Client &c)
             break;
         }
     }
-    int fd = c.getFd();
-    close(fd);
+	int fd = c.getFd();
+
+	std::vector<Channel> listOfChannels = _Channels;
+	for (std::vector<Channel>::iterator it = listOfChannels.begin(); it != listOfChannels.end(); ++it)
+	{
+		Channel channel = *it;
+		if (channel.isMember(fd))
+			channel.removeMember(fd);
+		if (channel.isInvited(fd))
+			channel.removeInvited(fd);
+		if (channel.isOperator(fd))
+			channel.removeOperator(fd);
+	}
 	//delete _Clients[fd];/problema de malloc, no se donde alocamos memoria
+	close(fd);
 	_Clients.erase(fd);
 }
 
-void Server::_passServer(Client &client,std::string pass)
+bool Server::_passServer(Client &client,std::string pass)
 {
 	std::cout<<"checking password"<<std::endl;
 	if (pass == getPassword())
@@ -295,11 +316,13 @@ void Server::_passServer(Client &client,std::string pass)
 		client.setHasPassword(true);
 		//client.setAutentic(true);
 		std::cout<<"OK PASSWORD"<<std::endl;
+		return(true);
 	}
 	else
 	{
 		std::cout<<"WRONG PASSWORD"<<std::endl;
-		_rmClient(client);
+		return(false);
+		//_rmClient(client);
 	}
 
 }

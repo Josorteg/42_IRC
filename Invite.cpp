@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/01 16:57:13 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/06 18:56:02 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 12:26:09 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@ void Server::_inviteServer(Client &client, std::vector<std::string> parsedComman
 		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), parsedCommand[2])));
 	if (!channel.isOperator(client.getFd())) //check if client who is inviting is operator
 		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(getServername(), parsedCommand[2])));
-	//ERROR!!!
+
 	// reply to both users:  <your_nickname> INVITE <target_nickname> :<channel>
-		message = ":" + client.getNickname() + " INVITE " + parsedCommand[1] + " " + parsedCommand[2];
+	message = ":" + client.getNickname() + " INVITE " + parsedCommand[1] + " " + parsedCommand[2];
 	std::map<int, Client>::iterator i = _Clients.find(invitedClientFd);
 	channel.addInvited(i->second);
 	//ONE of this message
-    _sendMessage(client, message);
+    //_sendMessage(client, message);ASI ESTÁ MEJOR, NOT NECESSARY, ONLY ONE MESSAGE FOR ALL!!!!
 	_sendMessage(i->second, message);
     // _sendMessage(client, RPL_INVITING(getServername(), parsedCommand[1], parsedCommand[2],client.getNickname()));
-    // _sendMessage(i->second, RPL_INVITING(getServername(), parsedCommand[1], parsedCommand[2],client.getNickname()));
+    _sendMessage(i->second, RPL_INVITING(getServername(), parsedCommand[1], parsedCommand[2],client.getNickname()));//lets try this!!
 }

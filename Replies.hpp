@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 18:22:54 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/05 19:27:28 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/07 19:04:22 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@
 
 //join
 # define ERR_NOSUCHCHANNEL(channel) (std::string("403 " + channel + " :No such channel"))
-# define ERR_CHANNELISFULL(servername,channel) (std::string(":" + servername + " 471 " + channel + " :Cannot join channel (+l)"))
+# define ERR_CHANNELISFULL(nickname,channel) (std::string(":Papapitufo 471 "+ nickname + " " + channel + " :Cannot join channel (+l)"))
 # define ERR_INVITEONLYCHAN(channel) (std::string("473 " + channel + " :Cannot join channel (+i)"))
-# define ERR_BADCHANNELKEY(channel) (std::string("475 " + channel + " :Cannot join channel (+k)"))
+# define ERR_BADCHANNELKEY(nickname,channel) (std::string("475 " + nickname + " " + channel + " :Cannot join channel (+k)")) //cambio 7/5
 # define RPL_NOTOPIC(servername,channel) (std::string(":" + servername + " 331 " + channel + " :No topic is set"))
-# define RPL_TOPIC(servername,channel,topic) (std::string(":" + servername +"332 " + channel + topic))
+# define RPL_TOPIC(servername,channel,topic) (std::string(":" + servername + " 332 " + channel + topic))
 # define RPL_NAMREPLY(servername,nickname,channel,clientlist)(std::string(":" + servername + " 353 " + nickname + " = " + channel + " :" + clientlist))
 # define RPL_ENDOFNAMES(channel) (std::string("366 bye " + channel + " : End of /NAMES list"))
 
