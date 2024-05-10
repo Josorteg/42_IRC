@@ -6,11 +6,11 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:43:48 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/05 15:54:42 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 void Server::_modeHandleOperatorPrivileges (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag)
 {

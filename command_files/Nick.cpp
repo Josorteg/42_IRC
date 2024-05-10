@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 10:04:35 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/07 20:02:48 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 static bool	nickChecker(std::string nick)
 {
@@ -22,7 +22,7 @@ static bool	nickChecker(std::string nick)
 void Server::_nickServer(Client &client, std::vector<std::string> parsedCommand)
 {
 	std::string message;
-	
+
 	if (parsedCommand.size() < 2)
 	{
 		_sendMessage(client, ERR_NONICKNAMEGIVEN());

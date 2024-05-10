@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/07 20:25:19 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 static bool	nameChecker(std::string name)
 {
@@ -165,7 +165,7 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 			std::set<int> listOfMembers = channel.getMembers();
 			std::string listOfClients = _getChannelMembersTxt(channel, " ", 1);
 
-			message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName();		
+			message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName();
 			if (!channel.getTopic().empty())
 				message += channel.getTopic();
 			_sendMessage(client, message);

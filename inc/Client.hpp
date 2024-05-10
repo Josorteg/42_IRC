@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 17:00:28 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/07 20:28:17 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include "Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 class Client
 {

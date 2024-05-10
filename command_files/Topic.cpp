@@ -3,19 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Topic.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:40:20 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/07 19:43:50 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand)
 {
 	std::cout<<"Hello i am in function _topicServer "<< client.getFd() << " " << parsedCommand[0] << std::endl;
-	
+
 	//TOPIC #abc :New topic name
 	//TOPIC #test ; check the topic for #test.
 
@@ -30,7 +30,7 @@ void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand
 	std::string topic = "";
 	for (size_t j = 2;j < parsedCommand.size();j++)
 		topic += " " + parsedCommand[j];
-		
+
 	if (!channel.isMember(client.getFd()))
 		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), channel.getName())));
 	if (parsedCommand.size() == 2)
@@ -45,7 +45,7 @@ void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand
 
 	channel.setTopic(topic);
 
-	message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName();		
+	message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName();
 	if (!channel.getTopic().empty())
 		message += channel.getTopic();
 	_sendMessage(channel, 0, message);

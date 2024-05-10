@@ -6,11 +6,11 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/06 17:40:34 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/06 18:19:41 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 void Server::_partServer(Client &client, std::vector<std::string> parsedCommand)
 {

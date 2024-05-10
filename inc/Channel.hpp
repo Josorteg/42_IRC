@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/07 20:04:54 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include"Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 class Client;
 class Server;
@@ -21,7 +21,7 @@ class Channel
 	public:
 		Channel (Server *serv,std::string name,Client &client);
 		~Channel(void);
-		
+
 		std::string getName(void) const {return this->_name;};
 		std::string getPassword(void){return this->_password;};
 		std::string getTopic(void){return this->_topic;};
@@ -40,7 +40,7 @@ class Channel
 		void set_k(bool k){this->_k = k;};
 		void set_l(bool l){this->_l = l;};
 		void set_t(bool t){this->_t = t;};
-		
+
 		void addMember(Client client);
 		void addOperator(Client client);
 		void addInvited(Client client);

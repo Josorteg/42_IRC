@@ -6,7 +6,7 @@
 #    By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/05/06 18:03:25 by josorteg         ###   ########.fr        #
+#    Updated: 2024/05/10 12:17:59 by josorteg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,33 +22,54 @@ CFLAGS = -Werror -Wextra -Wall -std=c++98
 ##$-g -fsanitize=address
 #########
 
+#----------------------------SOURCES-------------------------------------------#
+
+FILES = main Server Client Channel
+MODE_FILES = ModeFlagI ModeFlagK ModeFlagT ModeFlagO ModeFlagL
+COMMAND_FILES = Nick User Join Whonames Mode Privmsg Invite Topic Kick Ping Part
+
+#----------------------------PATHS---------------------------------------------#
+INC = -I ./inc
+
+
+SRC = $(addsuffix .cpp, $(FILES))\
+	$(addsuffix .cpp, $(MODE_FILES))\
+	$(addsuffix .cpp, $(COMMAND_FILES))
+
+#----------------------------OBJECTS FOLDER------------------------------------#
+
+vpath %.cpp files/:mode_files/:command_files
+
+F_OBJ = obj/
+OBJ = $(addprefix $(F_OBJ), $(SRC:.cpp=.o))
+DEP = $(addprefix $(F_OBJ), $(SRC:.cpp=.d))
+
+
+
 #########
-FILES = main Server Client Nick User Join Channel Whonames Mode Privmsg Invite ModeFlagI ModeFlagK ModeFlagT ModeFlagO ModeFlagL Topic Kick Ping Part
 
-SRC = $(addsuffix .cpp, $(FILES))
+#----------------------------OLD OBJECT DEEPS----------------------------------#
+#OBJ = $(SRC:.cpp=.o)
+#DEP = $(addsuffix .d, $(basename $(OBJ)))
+#-------------------------------ALL--------------------------------------------#
+
+all:  dir $(NAME)
+
+dir:
+	mkdir -p $(F_OBJ)
 
 
-##vpath %.cpp
-#########
+$(F_OBJ)%.o: %.cpp
+	@${CC} $(CFLAGS) -I ./inc  -MMD -c $< -o $@
 
-#########
-OBJ = $(SRC:.cpp=.o)
-DEP = $(addsuffix .d, $(basename $(OBJ)))
-#########
-
-#########
-%.o: %.cpp
-	@${CC} $(CFLAGS) -MMD -c $< -o $@
-
-all:
-	@$(MAKE) $(NAME) --no-print-directory
 
 $(NAME):: $(OBJ) Makefile
-	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@$(CC) $(CFLAGS) -I ./inc $(OBJ) -o $(NAME)
 
 
 clean:
-	@$(RM) $(OBJ) $(DEP) --no-print-directory
+	@$(RM) $(OBJ) $(DEP)
+	$(RM) -R obj
 
 
 fclean: clean
@@ -60,3 +81,6 @@ re:	fclean all
 .PHONY: all clean fclean re
 
 -include $(DEP)
+
+#-----------------------------VPATH TO SEARCH IN ALL THE FOLDERS---------------#
+

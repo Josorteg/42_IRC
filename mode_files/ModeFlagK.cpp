@@ -6,11 +6,11 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:44:04 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/05 16:09:56 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 void Server::_modeHandlePassword (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag)
 {

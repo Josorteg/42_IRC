@@ -6,11 +6,11 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/05 19:26:50 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 void Server::_privmsgServer(Client &client, std::vector<std::string> parsedCommand)
 {

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/07 20:29:28 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:11:51 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 bool sigend = false;
 
@@ -355,16 +355,16 @@ void Server::setTime() {
     int year = localTime->tm_year + 1900;
     int month = localTime->tm_mon + 1;
     int day = localTime->tm_mday;
-    int hour = localTime->tm_hour; 
-    int minute = localTime->tm_min;    
+    int hour = localTime->tm_hour;
+    int minute = localTime->tm_min;
     int second = localTime->tm_sec;
 
     std::ostringstream oss;
-    oss << std::setw(2) << std::setfill('0') << day << '-' 
-		<< std::setw(2) << std::setfill('0') << month << '-' 
-		<< year << ' ' 
-		<< std::setw(2) << std::setfill('0') << hour << ':' 
-		<< std::setw(2) << std::setfill('0') << minute << ':' 
+    oss << std::setw(2) << std::setfill('0') << day << '-'
+		<< std::setw(2) << std::setfill('0') << month << '-'
+		<< year << ' '
+		<< std::setw(2) << std::setfill('0') << hour << ':'
+		<< std::setw(2) << std::setfill('0') << minute << ':'
 		<< std::setw(2) << std::setfill('0') << second;
     this->_time = oss.str();
     std::cout << "Current date and time: " << _time << std::endl;

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/07 20:30:39 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 // if (parsedCommand[2].empty() || parsedCommand[2] == "b")
 	// {
@@ -76,7 +76,7 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 		_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1]));
 
 	Channel& channel = _getChannelbyname((parsedCommand[1]));
-	
+
 	if (parsedCommand.size() == 2)
 	{
 		std::string flags = "";
@@ -90,11 +90,11 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 			flags += "t";
 
 		std::cout<<"MODE all flags "<< flags << std::endl;
-		
+
 		_sendMessage(client, RPL_CHANNELMODEIS(getServername(),client.getNickname(),channel.getName(),flags));
 		return;
 	}
-	
+
     if (!channel.isMember(client.getFd())) //check if client is member of the channel
 		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), parsedCommand[1])));
 	if (!channel.isOperator(client.getFd())) //check if client is operator

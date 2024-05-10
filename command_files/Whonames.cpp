@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Whonames.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 09:51:39 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/04 17:41:18 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"Includes.hpp"
+#include"./../inc/Includes.hpp"
 
 
 void Server::_whoServer(Client &client, std::vector<std::string> parsedCommand)
@@ -25,7 +25,7 @@ void Server::_whoServer(Client &client, std::vector<std::string> parsedCommand)
 			int a= *i;
 			std::map<int, Client>::iterator it = _Clients.find(a);
 			_sendMessage(client, RPL_WHOREPLY(parsedCommand[1],client.getNickname(),it->second.getHostname(),getServername(),it->second.getNickname(),it->second.getRealname()));
-			
+
 		}
 		_sendMessage(client, RPL_ENDOFWHO(parsedCommand[1],getServername(),client.getNickname()));
 	}
