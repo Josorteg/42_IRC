@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Privmsg.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ void Server::_privmsgServer(Client &client, std::vector<std::string> parsedComma
 	std::string text = "";
 
 	if (parsedCommand.size() > 1 && parsedCommand[1][0] == ':')
-		return(_sendMessage(client, ERR_NORECIPIENT(getServername())));
+		return(_sendMessage(client, ERR_NORECIPIENT(_getServername())));
 	if (parsedCommand.size() < 3)
-		return(_sendMessage(client, ERR_NOTEXTTOSEND(getServername())));
+		return(_sendMessage(client, ERR_NOTEXTTOSEND(_getServername())));
 
 	std::vector<std::string> receivers = _splitString(parsedCommand[1], ',');
 	for (size_t j = 2;j < parsedCommand.size();j++)
@@ -40,7 +40,7 @@ void Server::_handleMessageToUser(Client &client, std::string receiver, std::str
 {
 	int clientToSendMessageFd = _getClientfdByName(receiver);
 	if (clientToSendMessageFd == 0)
-		return(_sendMessage(client, ERR_NOSUCHNICK(getServername(), receiver)));
+		return(_sendMessage(client, ERR_NOSUCHNICK(_getServername(), receiver)));
 	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
 	std::map<int, Client>::iterator it = _Clients.find(clientToSendMessageFd);
 	_sendMessage(it->second, message);
@@ -56,7 +56,7 @@ void Server::_handleMessageToChannel(Client &client, std::string receiver, std::
 	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
 
 	if (!channel.isMember(client.getFd()))
-		return(_sendMessage(client, ERR_CANNOTSENDTOCHAN(getServername(), receiver)));
+		return(_sendMessage(client, ERR_CANNOTSENDTOCHAN(_getServername(), receiver)));
 	_sendMessage(channel,client.getFd(),message);
 }
 
@@ -73,5 +73,5 @@ void Server::_isonServer(Client &client, std::vector<std::string> parsedCommand)
 			listOfClients += parsedCommand[i] + " ";
 	}
 	std::cout<<"_isonServer: message is " << message << std::endl;
-	_sendMessage(client, RPL_ISON(getServername(), client.getNickname(),listOfClients));
+	_sendMessage(client, RPL_ISON(_getServername(), client.getNickname(),listOfClients));
 }

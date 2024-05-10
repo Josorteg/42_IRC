@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Topic.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:40:20 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,16 @@ void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand
 		topic += " " + parsedCommand[j];
 
 	if (!channel.isMember(client.getFd()))
-		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), channel.getName())));
+		return(_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), channel.getName())));
 	if (parsedCommand.size() == 2)
 	{
 		if (channel.getTopic().empty())
-			return(_sendMessage(client, RPL_NOTOPIC(getServername(),channel.getName())));
+			return(_sendMessage(client, RPL_NOTOPIC(_getServername(),channel.getName())));
 		else
-			return(_sendMessage(client, RPL_TOPIC(getServername(),channel.getName(),channel.getTopic())));
+			return(_sendMessage(client, RPL_TOPIC(_getServername(),channel.getName(),channel.getTopic())));
 	}
 	if (channel.get_t() == true && !channel.isOperator(client.getFd()))
-		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(getServername(), channel.getName())));
+		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), channel.getName())));
 
 	channel.setTopic(topic);
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Kick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:43:50 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
         Channel& channel = _getChannelbyname(listOfChannels[0]);
         std::set<int> listOfMembers = channel.getMembers();
         if (!channel.isMember(client.getFd()))
-			return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), channel.getName())));
+			return(_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), channel.getName())));
         if (!channel.isOperator(client.getFd()))
-		    return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(getServername(), channel.getName())));
+		    return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), channel.getName())));
         for (size_t i = 0; i < listOfUsersToKick.size(); ++i)
             _kickUser(channel, client, listOfUsersToKick[i], comment);
     }
@@ -65,12 +65,12 @@ void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
 			std::set<int> listOfMembers = channel.getMembers();
 			if (!channel.isMember(client.getFd()))
 			{
-				_sendMessage(client, ERR_NOTONCHANNEL(getServername(), channel.getName()));
+				_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), channel.getName()));
 				continue;
 			}
 			if (!channel.isOperator(client.getFd()))
 			{
-				_sendMessage(client, ERR_CHANOPRIVSNEEDED(getServername(), channel.getName()));
+				_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), channel.getName()));
 				continue;
 			}
 			_kickUser(channel, client, listOfUsersToKick[i], comment);
@@ -84,9 +84,9 @@ void Server::_kickUser(Channel &channel, Client &client, std::string nickname, s
 
 	int clientFdToKick = _getClientfdByName(nickname);
     if (clientFdToKick == 0)
-		return(_sendMessage(client, ERR_NOSUCHNICK(getServername(), nickname)));
+		return(_sendMessage(client, ERR_NOSUCHNICK(_getServername(), nickname)));
     if (!channel.isMember(clientFdToKick))
-    	return(_sendMessage(client, ERR_USERNOTINCHANNEL(getServername(), nickname, channel.getName())));
+    	return(_sendMessage(client, ERR_USERNOTINCHANNEL(_getServername(), nickname, channel.getName())));
 
 //ERROR WHEN YOU KICK YOURSELF!!!
     //send message to all people in channel i kicked him
@@ -105,4 +105,16 @@ void Server::_kickUser(Channel &channel, Client &client, std::string nickname, s
 	channel.removeOperator(clientFdToKick);
 	channel.removeInvited(clientFdToKick);
 
+	//if there is no one in the channel, delete channel
+	if (channel.getMembers().size() < 1)
+	{
+		for (std::vector<Channel>::iterator it = _Channels.begin(); it != _Channels.end(); ++it)
+   		{
+			if (*it == channel)
+			{
+				this->_Channels.erase(it);
+				break;
+			}
+		}
+	}
 }

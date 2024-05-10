@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Whonames.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 09:51:39 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:37:25 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,25 +16,18 @@
 void Server::_whoServer(Client &client, std::vector<std::string> parsedCommand)
 {
 	//(parsedCommand[1]).erase(((parsedCommand[1]).begin()));
-	if (_channelExists(parsedCommand[1]) > 0)
+	if (!_channelExists(parsedCommand[1]))
+		return(_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1])));
+	
+	Channel& channel = _getChannelbyname((parsedCommand[1]));
+	std::set<int> currentUsers = channel.getMembers();
+	for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
 	{
-		Channel& channel = _getChannelbyname((parsedCommand[1]));
-		std::set<int> currentUsers = channel.getMembers();
-		for (std::set<int>::iterator i = currentUsers.begin(); i != currentUsers.end(); ++i)
-		{
-			int a= *i;
-			std::map<int, Client>::iterator it = _Clients.find(a);
-			_sendMessage(client, RPL_WHOREPLY(parsedCommand[1],client.getNickname(),it->second.getHostname(),getServername(),it->second.getNickname(),it->second.getRealname()));
-
-		}
-		_sendMessage(client, RPL_ENDOFWHO(parsedCommand[1],getServername(),client.getNickname()));
+		int a= *i;
+		std::map<int, Client>::iterator it = _Clients.find(a);
+		_sendMessage(client, RPL_WHOREPLY(parsedCommand[1],client.getNickname(),it->second.getHostname(),_getServername(),it->second.getNickname(),it->second.getRealname()));
 	}
-	else
-	{
-		_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1]));
-	}
-
-
+		_sendMessage(client, RPL_ENDOFWHO(parsedCommand[1],_getServername(),client.getNickname()));
 
 }
 

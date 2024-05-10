@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ModeFlagT.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:44:29 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,5 @@ void Server::_modeHandleTopic (Client &client, Channel &channel, std::pair<std::
         channel.set_t(true);
     else
         channel.set_t(false);
-    _sendMessage(channel,0, RPL_CHANNELMODEIS(getServername(),client.getNickname(),channel.getName(), parsedFlag.first));
+    _sendMessage(channel,0, RPL_CHANNELMODEIS(_getServername(),client.getNickname(),channel.getName(), parsedFlag.first));
 }

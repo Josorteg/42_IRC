@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 11:38:52 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:17 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void Server::_userServer(Client &client, std::vector<std::string> parsedCommand)
 	if (!client.getNickname().empty() && client.getHasPassword())
 		client.setIsRegistered(true);
 
-	_sendMessage(client, RPL_WELCOME(client.getNickname(), this->getServername() ,client.getHostname()));
-	_sendMessage(client, RPL_YOURHOST(this->getServername(),client.getNickname()));
-	_sendMessage(client, RPL_CREATED(this->getServername(),this->getTime()));
-	_sendMessage(client, RPL_MYINFO(this->getServername(),client.getNickname()));
+	_sendMessage(client, RPL_WELCOME(client.getNickname(), this->_getServername() ,client.getHostname()));
+	_sendMessage(client, RPL_YOURHOST(this->_getServername(),client.getNickname()));
+	_sendMessage(client, RPL_CREATED(this->_getServername(),this->_getTime()));
+	_sendMessage(client, RPL_MYINFO(this->_getServername(),client.getNickname()));
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ModeFlagO.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:43:48 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ void Server::_modeHandleOperatorPrivileges (Client &client, Channel &channel, st
     int NewOperatorFd = _getClientfdByName(parsedFlag.second);
 
     if (NewOperatorFd == 0) //check if new operator exists
-	     return(_sendMessage(client, ERR_NOSUCHNICK(getServername(), parsedFlag.second)));
+	     return(_sendMessage(client, ERR_NOSUCHNICK(_getServername(), parsedFlag.second)));
     if (!channel.isMember(NewOperatorFd))  //check if new operator is member of the channel
-		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), channel.getName())));
+		return(_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), channel.getName())));
     std::map<int, Client>::iterator it = _Clients.find(NewOperatorFd);
 
 
@@ -32,6 +32,6 @@ void Server::_modeHandleOperatorPrivileges (Client &client, Channel &channel, st
     else
         channel.removeOperator(it->second);
     parsedFlag.first.append(" ").append(parsedFlag.second);
-	_sendMessage(channel,0, RPL_CHANNELMODEIS(getServername(),client.getNickname(),channel.getName(), parsedFlag.first));
+	_sendMessage(channel,0, RPL_CHANNELMODEIS(_getServername(),client.getNickname(),channel.getName(), parsedFlag.first));
 
 }

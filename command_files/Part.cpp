@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/06 17:40:34 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void Server::_partServer(Client &client, std::vector<std::string> parsedCommand)
 
 		Channel& channel = _getChannelbyname(listOfChannels[i]);
 		if (!channel.isMember(client.getFd()))
-			return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), listOfChannels[i])));
+			return(_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), listOfChannels[i])));
 		std::cout<< "PART reason" << reason << std::endl;
 		message = ":" + client.getNickname() + "!~" + client.getHostname() + " PART " + channel.getName() + reason;
 		std::cout<< "PART message" << message << std::endl;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ModeFlagI.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:43:31 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,5 @@ void Server::_modeHandleInviteOnly (Client &client, Channel &channel, std::pair<
 		std::cout<<"CHANNEL: "<<channel.getName()<<"UNset as ONLY INVITED MODE!!!!"<<"BOOLEAN: "<<channel.get_i()<<std::endl;
 	}
 
-	_sendMessage(channel,0, RPL_CHANNELMODEIS(getServername(),client.getNickname(),channel.getName(), parsedFlag.first));
+	_sendMessage(channel,0, RPL_CHANNELMODEIS(_getServername(),client.getNickname(),channel.getName(), parsedFlag.first));
 }

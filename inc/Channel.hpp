@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:17:53 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,11 @@ class Channel
 {
 	public:
 		Channel (Server *serv,std::string name,Client &client);
+		bool operator==(const Channel& other) const {return this->getName() == other.getName();};
 		~Channel(void);
 
 		std::string getName(void) const {return this->_name;};
-		std::string getPassword(void){return this->_password;};
+		std::string _getPassword(void){return this->_password;};
 		std::string getTopic(void){return this->_topic;};
 		int getClientLimit(void){return this->_clientLimit;};
 

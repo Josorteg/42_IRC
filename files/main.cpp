@@ -3,20 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 19:08:45 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 12:11:26 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:28:56 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"./../inc/Includes.hpp"
 
-int main (int ac, char **arg)
+bool checkInput(char *argv)
 {
-	if (ac != 3)
+	int len = strlen(argv);
+
+    for (int i = 0; i < len; i++)
+	{
+		if (!std::isdigit(argv[i]))
+            return(1);
+	}
+	if (atoi(argv) < 1024 || atoi(argv) > 65535)
 		return(1);
+	return(0);
+}
+
+int main (int argc, char **argv)
+{
+	if (argc != 3)
+	{
+		std::cout << "Error. Please enter 2 arguments" << std::endl;
+		std::cout << "Usage: ./IRC port password. Range of port: <1024;65535>" << std::endl;
+		return(1);
+	}
+	if (checkInput(argv[1]))
+	{
+		std::cout << "Error. Incorrect input." << std::endl;
+		std::cout << "Usage: ./IRC port password. Range of port: <1024;65535>" << std::endl;
+		return(1);
+	}
 	Server init;
-	init.SetServer(atoi(arg[1]),arg[2]);
+	init.SetServer(atoi(argv[1]),argv[2]);
 	init.RunServer();
 }

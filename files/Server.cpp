@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 12:58:31 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 20:04:23 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ bool sigend = false;
 Server::Server (void)
 {
 	this->_servername = "PapaPitufo";
-	this->setTime();
+	this->_setTime();
 }
 
 void Server::SetServer(int port,std::string psw)
@@ -63,7 +63,6 @@ void handler(int signal)
 {
 	(void)signal;
 	sigend = true;
-	//std::cout<<"Signal detected"<<std::endl;
 }
 
 void Server::RunServer(void)
@@ -92,9 +91,8 @@ void Server::RunServer(void)
 			// 		std::cout << std::endl<< "RunServer: actual buffer for fd: " << _pollFds[it].fd << ": |" << its->second.getBuffer() << "|"<<std::endl<< std::endl;
 			// }
 		}
-
-
 	}
+	
 	std::cout<<"Signal detected"<<std::endl;
 
 	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
@@ -117,12 +115,12 @@ void Server::_NewClient(void)
 	if (clientFd == -1)
 	{
 		std::cerr<<"error6"<<std::endl;
-			exit(6);
+		exit(6);
 	}
 	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) == -1)
 	{
 		std::cerr<<"error7"<<std::endl;
-			exit(7);
+		exit(7);
 	}
 	NewPoll.fd = clientFd;
 	NewPoll.events = POLLIN;
@@ -136,62 +134,51 @@ void Server::_Request(int fd)
 	memset(buffer,0,sizeof(buffer));
 
 	ssize_t bytes = recv(fd, buffer, sizeof(buffer) - 1 , 0);
-
-	//we add buffer to _Clients.
-
+	
 	std::cout<<"Request from client with fd: "<<fd<<std::endl;
 
-	if (bytes == 0) // 0 y -1 no es lo mismo, 0 es desconexion, -1 error. De momento nada
+	if (bytes == 0) 
 	{
-		std::cout<<"Client left: "<<fd<<std::endl;
+		std::cout<< "Client left: " << fd << std::endl;
+		_rmClient(fd);
 		//funcion para liberar FD's (poll, lista de clientes y cerrrar FD)
 		close(fd);
 	}
-	if (bytes < 0) // 0 y -1 no es lo mismo, 0 es desconexion, -1 error. De momento nada
+	if (bytes < 0) 
 	{
 		std::cerr<<"error disconection"<<std::endl;
 		//funcion para liberar FD's (poll, lista de clientes y cerrrar FD)
+		_rmClient(fd);
 		close(fd);
 	}
 	else
 	{
 		buffer[bytes] ='\0';
-		std::map<int, Client>::iterator it = _Clients.find(fd); // find a proper client by fd
-		if (it != _Clients.end()) //if i found client by fd
+		std::map<int, Client>::iterator it = _Clients.find(fd);
+		
+		if (it != _Clients.end())
 		{
-   		 	it->second.setBuffer(it->second.getBuffer().append(buffer)); //fill a clients buffer
+   		 	it->second.setBuffer(it->second.getBuffer().append(buffer));
 
-			std::vector<std::string> commands; //vector of commands
-			//std::cout<<"Lets split a string |"<<it->second.getBuffer()<<"|"<<std::endl;
-			commands = _splitString(it->second.getBuffer(), "\r\n"); // split the commands into vector
-
+			std::vector<std::string> commands; 
+			commands = _splitString(it->second.getBuffer(), "\r\n");
 			if (!commands.empty())
 			{
-				for (size_t i = 0; i < commands.size() - 1; ++i) //process each command (commands.size() - 1 because last one is \r\n or not full command yet)
+				for (size_t i = 0; i < commands.size() - 1; ++i)
 				{
-					if(ProcessCommand(commands[i], fd) == false)
-						return; // Jose you can continue in this funtion :)
+					if(_ProcessCommand(commands[i], fd) == false)
+						return;
 				}
-				//if the last one is delimiter, i need to reset buffer
 				if (commands.back() == "\r\n")
-				{
-					//std::cout<<"buffer before reset |"<<it->second.getBuffer()<<"|"<<std::endl;
-					it->second.setBuffer(""); //reset buffer
-					//std::cout<<"buffer after reset |"<<it->second.getBuffer()<<"|"<<std::endl;
-				}
+					it->second.setBuffer("");
 				else
-				{
-					//std::cout<<"buffer before update |"<<it->second.getBuffer()<<"|"<<std::endl;
-					it->second.setBuffer(commands.back()); //update buffer by last value
-					//std::cout<<"buffer after update |"<<it->second.getBuffer()<<"|"<<std::endl;
-				}
+					it->second.setBuffer(commands.back());
 			}
    		}
 		else
 		{
 			std::cout << "Client with fd " << fd << " not found." << std::endl;
 		}
-		std::cout<<std::endl; //newline
 	}
 }
 Server::~Server (void){}
@@ -239,7 +226,7 @@ std::vector<std::string>  Server::_splitString(std::string line, std::string del
 	return lines;
 }
 
-bool Server::ProcessCommand(std::string command, int fd)
+bool Server::_ProcessCommand(std::string command, int fd)
 {
 	std::vector<std::string> parsedCommand;
 	parsedCommand = _splitString(command, ' ');
@@ -248,6 +235,7 @@ bool Server::ProcessCommand(std::string command, int fd)
 	if (it != _Clients.end())
 	{
 		std::cout<<"---Hello here is time to process this command: "<<command<<"|"<<std::endl;
+		
 		if (parsedCommand[0] == "CAP")
 		{
 			return (true);
@@ -301,6 +289,19 @@ void Server::_rmClient(const Client &c)
 		channel.removeMember(fd);
 		channel.removeInvited(fd);
 		channel.removeOperator(fd);
+
+		//if there is no one in the channel, delete channel
+		if (channel.getMembers().size() < 1)
+		{
+			for (std::vector<Channel>::iterator it = _Channels.begin(); it != _Channels.end(); ++it)
+   			{
+				if (*it == channel)
+				{
+					this->_Channels.erase(it);
+					break;
+				}
+			}
+		}
 	}
 	//delete _Clients[fd];/problema de malloc, no se donde alocamos memoria
 	close(fd);
@@ -312,7 +313,7 @@ void Server::_rmClient(const Client &c)
 bool Server::_passServer(Client &client,std::string pass)
 {
 	std::cout<<"checking password"<<std::endl;
-	if (pass == getPassword())
+	if (pass == _getPassword())
 	{
 		client.setHasPassword(true);
 		//client.setAutentic(true);
@@ -329,6 +330,8 @@ bool Server::_passServer(Client &client,std::string pass)
 
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
+
+	
 	std::string cmds[12] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART"};
 // "NAMES", };
 	void	(Server::*f[12])(Client &client, std::vector<std::string> parsedCommand) = \
@@ -351,7 +354,7 @@ void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 	 }
 }
 
-void Server::setTime() {
+void Server::_setTime() {
 
     std::time_t currentTime = std::time(nullptr);
     std::tm* localTime = std::localtime(&currentTime);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:41:24 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,21 @@ class Server
 		~Server(void);
 		void SetServer(int port,std::string psw);
 		void RunServer();
-		bool ProcessCommand(std::string command, int fd);
 
 	private:
 
 		void _NewClient(void);
 		void _Request(int fd);
+		bool _ProcessCommand(std::string command, int fd);
 		std::vector<std::string> _splitString(std::string line, char delimiter);
 		std::vector<std::string> _splitString(std::string line, std::string delimiter);
 		void _rmClient(const Client &c);
 
-		std::string getPassword(void){return this->_password;};
-		std::string getServername(void) const {return this->_servername;};
-		std::string getTime(void){return this->_time;};
+		std::string _getPassword(void){return this->_password;};
+		std::string _getServername(void) const {return this->_servername;};
+		std::string _getTime(void){return this->_time;};
 
-		void setTime(void);
+		void _setTime(void);
 		void _sendMessage(Client &client,std::string message);
 		void _sendMessage(Channel &channel,int clientFdException, std::string message);
 		void _exe(Client &client, std::vector<std::string> parsedCommand);

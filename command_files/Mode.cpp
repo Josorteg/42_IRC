@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 11:28:18 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 // if (parsedCommand[2].empty() || parsedCommand[2] == "b")
 	// {
-	// 	_sendMessage(client, RPL_CHANNELMODEIS(getServername(),client.getNickname(),(parsedCommand[1])));
+	// 	_sendMessage(client, RPL_CHANNELMODEIS(_getServername(),client.getNickname(),(parsedCommand[1])));
 	// 	_sendMessage(client, RPL_ENDOFBANLIST((parsedCommand[1])));
 	// }
 
@@ -91,14 +91,14 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 
 		std::cout<<"MODE all flags "<< flags << std::endl;
 
-		_sendMessage(client, RPL_CHANNELMODEIS(getServername(),client.getNickname(),channel.getName(),flags));
+		_sendMessage(client, RPL_CHANNELMODEIS(_getServername(),client.getNickname(),channel.getName(),flags));
 		return;
 	}
 
     if (!channel.isMember(client.getFd())) //check if client is member of the channel
-		return(_sendMessage(client, ERR_NOTONCHANNEL(getServername(), parsedCommand[1])));
+		return(_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), parsedCommand[1])));
 	if (!channel.isOperator(client.getFd())) //check if client is operator
-		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(getServername(), parsedCommand[1])));
+		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), parsedCommand[1])));
 
 	//parse data to vector of pairs
 	/* for example MODE #1 ok+o-tli username password username2 50
@@ -132,7 +132,7 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 		else
 		{
 			flag += flags[i];
-			_sendMessage(client, ERR_UNKNOWNMODE(getServername(),parsedCommand[1],flag));
+			_sendMessage(client, ERR_UNKNOWNMODE(_getServername(),parsedCommand[1],flag));
 		}
 	}
 	//just print, (delete later)
