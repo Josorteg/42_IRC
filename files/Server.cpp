@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 12:11:51 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:58:31 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void Server::SetServer(int port,std::string psw)
 	pollfd NewPoll;
 	this->_password = psw;
 	_serverFd = socket(AF_INET,SOCK_STREAM,0);
+	int optval = 1;//chat gpt sugerencia SO_REUSEADOR hace que se pueda reutilizar antes
+	setsockopt(_serverFd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));//chat gpt sugerencia
 	if (_serverFd == -1)
 	{
 		std::cerr<<"error1"<<std::endl;
@@ -303,6 +305,8 @@ void Server::_rmClient(const Client &c)
 	//delete _Clients[fd];/problema de malloc, no se donde alocamos memoria
 	close(fd);
 	_Clients.erase(fd);
+
+
 }
 
 bool Server::_passServer(Client &client,std::string pass)

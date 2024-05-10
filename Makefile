@@ -6,7 +6,7 @@
 #    By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/05/10 12:17:59 by josorteg         ###   ########.fr        #
+#    Updated: 2024/05/10 13:00:55 by josorteg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,17 +60,15 @@ dir:
 
 
 $(F_OBJ)%.o: %.cpp
-	@${CC} $(CFLAGS) -I ./inc  -MMD -c $< -o $@
+	@${CC} $(CFLAGS) -MMD -c $< -o $@
 
 
 $(NAME):: $(OBJ) Makefile
 	@$(CC) $(CFLAGS) -I ./inc $(OBJ) -o $(NAME)
 
-
 clean:
-	@$(RM) $(OBJ) $(DEP)
+	$(RM) $(OBJ) $(DEP)
 	$(RM) -R obj
-
 
 fclean: clean
 	@$(RM) $(NAME) --no-print-directory
