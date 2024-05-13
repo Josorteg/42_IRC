@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+         #
+#    By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/05/10 13:00:55 by josorteg         ###   ########.fr        #
+#    Updated: 2024/05/13 19:25:59 by mmoramov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 
 
-NAME = IRC
+NAME = IRC #ircserv by subject!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #########
 RM = rm -f

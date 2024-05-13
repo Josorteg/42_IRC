@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:44:43 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/13 19:44:13 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void Server::_modeHandleLimit (Client &client, Channel &channel, std::pair<std::
     std::cout<<"Hello i am in function _modeHandleLimit"<< client.getFd() << " " << channel.getName()
      << " " << parsedFlag.first << " " << parsedFlag.second << std::endl;
 
-    std::string command = "MODE"; //I will change this
+    std::string command = "MODE";
 
     if (parsedFlag.first[0] == '+')
     {
@@ -29,7 +29,7 @@ void Server::_modeHandleLimit (Client &client, Channel &channel, std::pair<std::
 			    continue;
 		    else if (i > 0 && !std::isdigit(parsedFlag.second[i]))
 			{
-                return(_sendMessage(client, ERR_NEEDMOREPARAMS(command))); //?
+                return(_sendMessage(client, ERR_NEEDMOREPARAMS(command)));
             }
 	    }
 
@@ -37,7 +37,7 @@ void Server::_modeHandleLimit (Client &client, Channel &channel, std::pair<std::
 		std::string posString = parsedFlag.second;
 		std::istringstream iss(posString);
 		if (!(iss >> limitValue) || limitValue > INT_MAX) //int max?
-			return(_sendMessage(client, ERR_NEEDMOREPARAMS(command)));      //?
+			return(_sendMessage(client, ERR_NEEDMOREPARAMS(command)));
         channel.set_l(true);
         channel.setClientLimit(static_cast<int>(limitValue));
         parsedFlag.first.append(" ").append(parsedFlag.second); //from <+i, 123> i make <+i 123,123> for send in RPL_CHANNELMODEIS

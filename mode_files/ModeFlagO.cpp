@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ModeFlagO.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:43:48 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/13 18:17:09 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/13 19:40:13 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void Server::_modeHandleOperatorPrivileges (Client &client, Channel &channel, st
     std::cout<<"Hello i am in function _modeHandleOperatorPrivileges"<< client.getFd() << " " << channel.getName()
      << " " << parsedFlag.first << " " << parsedFlag.second << std::endl;
 
-    std::string command = "MODE"; //I will change this
     int NewOperatorFd = _getClientfdByName(parsedFlag.second);
 
     if (NewOperatorFd == 0) //check if new operator exists

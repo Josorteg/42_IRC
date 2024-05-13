@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/06 17:40:34 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/13 19:47:51 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ void Server::_partServer(Client &client, std::vector<std::string> parsedCommand)
 		std::cout<< "PART reason" << reason << std::endl;
 		message = ":" + client.getNickname() + "!~" + client.getHostname() + " PART " + channel.getName() + reason;
 		std::cout<< "PART message" << message << std::endl;
-		//remove client from the channel.
 		_sendMessage(channel,0,message);
 		channel.removeMember(client.getFd());
 		channel.removeOperator(client.getFd());
