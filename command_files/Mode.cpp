@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/13 18:11:50 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,15 @@ void Server::_modeExe(Client &client, Channel &channel, std::vector<std::pair<st
 
 void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 {
-
+	std::cout<<"Before checking size"<<std::endl;
 	if (parsedCommand.size() < 2)
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
+	std::cout<<"Before checking channel exist"<<std::endl;
 	if (!_channelExists((parsedCommand[1])))
-		_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1]));
-
-	Channel& channel = _getChannelbyname((parsedCommand[1]));
+		return(_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1])));
+	std::cout<<"Before create channel "<<std::endl;
+	Channel& channel = _getChannelbyname((parsedCommand[1]));// malloc error when no channel name
+	std::cout<<"after create channel exist"<<std::endl;
 
 	if (parsedCommand.size() == 2)
 	{

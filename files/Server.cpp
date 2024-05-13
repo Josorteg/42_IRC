@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 20:04:23 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/13 18:39:48 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,17 +82,20 @@ void Server::RunServer(void)
 				if (_pollFds[it].fd == _serverFd)
 					_NewClient();
 				else
+				{
+					std::cout<<"Prueba LEAK DE MEMORIA antes del request"<<std::endl;
 					_Request(_pollFds[it].fd);
+				}
 			}
-			// if (_pollFds[it].fd != _serverFd )
-			// {
-			// 	std::map<int, Client>::iterator its = _Clients.find(_pollFds[it].fd);
-			// 	if (its->second.getFd() == _pollFds[it].fd)//problema de los nulls
-			// 		std::cout << std::endl<< "RunServer: actual buffer for fd: " << _pollFds[it].fd << ": |" << its->second.getBuffer() << "|"<<std::endl<< std::endl;
-			// }
+			if (_pollFds[it].fd != _serverFd )
+			{
+				std::map<int, Client>::iterator its = _Clients.find(_pollFds[it].fd);
+				if (its->second.getFd() == _pollFds[it].fd)//problema de los nulls
+					std::cout << std::endl<< "RunServer: actual buffer for fd: " << _pollFds[it].fd << ": |" << its->second.getBuffer() << "|"<<std::endl<< std::endl;
+			}
 		}
 	}
-	
+
 	std::cout<<"Signal detected"<<std::endl;
 
 	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
@@ -128,23 +131,37 @@ void Server::_NewClient(void)
 	_Clients.insert(std::make_pair(clientFd, Client(clientFd)));
 	std::cout<<"Registered a new client with fd: "<<clientFd<<std::endl;
 }
+void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+    size_t start_pos = 0;
+    while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        // Mover la posición de inicio después del reemplazo
+        start_pos += to.length();
+    }
+}
+
+
+
+
+
+
 void Server::_Request(int fd)
 {
 	char buffer[1024];
 	memset(buffer,0,sizeof(buffer));
 
 	ssize_t bytes = recv(fd, buffer, sizeof(buffer) - 1 , 0);
-	
+
 	std::cout<<"Request from client with fd: "<<fd<<std::endl;
 
-	if (bytes == 0) 
+	if (bytes == 0)
 	{
 		std::cout<< "Client left: " << fd << std::endl;
 		_rmClient(fd);
 		//funcion para liberar FD's (poll, lista de clientes y cerrrar FD)
 		close(fd);
 	}
-	if (bytes < 0) 
+	if (bytes < 0)
 	{
 		std::cerr<<"error disconection"<<std::endl;
 		//funcion para liberar FD's (poll, lista de clientes y cerrrar FD)
@@ -155,20 +172,28 @@ void Server::_Request(int fd)
 	{
 		buffer[bytes] ='\0';
 		std::map<int, Client>::iterator it = _Clients.find(fd);
-		
+
 		if (it != _Clients.end())
 		{
    		 	it->second.setBuffer(it->second.getBuffer().append(buffer));
+			std::cout<<"Buffer : "<<it->second.getBuffer()<<std::endl;
+			//vamos a escribir commands entero
+			std::vector<std::string> commands;
+			std::string line = it->second.getBuffer();
+			replaceAll(line,"\\n","\n");
+			replaceAll(line,"\\r","\r");
+			commands = _splitString(line, "\r\n");
 
-			std::vector<std::string> commands; 
-			commands = _splitString(it->second.getBuffer(), "\r\n");
 			if (!commands.empty())
 			{
+				std::cout<<"Buffer to command before: "<<commands[0]<<std::endl;
 				for (size_t i = 0; i < commands.size() - 1; ++i)
 				{
+					std::cout<<"Buffer to command after 0: "<<commands[0]<<std::endl;
 					if(_ProcessCommand(commands[i], fd) == false)
 						return;
 				}
+				//this is not working, no \r\n in commnads.back, we are splitting by \r\n
 				if (commands.back() == "\r\n")
 					it->second.setBuffer("");
 				else
@@ -235,7 +260,7 @@ bool Server::_ProcessCommand(std::string command, int fd)
 	if (it != _Clients.end())
 	{
 		std::cout<<"---Hello here is time to process this command: "<<command<<"|"<<std::endl;
-		
+
 		if (parsedCommand[0] == "CAP")
 		{
 			return (true);
@@ -331,7 +356,7 @@ bool Server::_passServer(Client &client,std::string pass)
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
 
-	
+
 	std::string cmds[12] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART"};
 // "NAMES", };
 	void	(Server::*f[12])(Client &client, std::vector<std::string> parsedCommand) = \
@@ -390,8 +415,8 @@ size_t Server::_channelExists(std::string name)
 
 Channel& Server::_getChannelbyname(std::string name)
 {
-	int i = 0;
-	while (name != _Channels[i].getName())
+	size_t i = 0;
+	while (i < _Channels.size() && (name != _Channels[i].getName()))
 		i++;
 	return (_Channels[i]);
 }
