@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:45:34 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,58 +27,17 @@ static bool	nameChecker(std::string name)
 
 bool Server::_joinExistingChannel(Client &client, Channel &channel)
 {
-	std::set<int> listOfMembers = channel.getMembers();
+	std::set<int> listOfMembers;
 	std::string message;
-	std::cout<<"CHANNEL: "<<channel.getName()<<"CHECKING I state"<<"BOOLEAN: "<<channel.get_i()<<std::endl;
-	std::set<int> listOfMembers2 = channel.getInvited();
-
-	 for (std::set<int>::iterator it = listOfMembers2.begin(); it != listOfMembers2.end(); ++it) {
-        std::cout << "Value: " << *it << std::endl;
-    }
-	std::cout << "End of values in invitedclient: " << std::endl;
-
-	for (std::set<int>::iterator it = listOfMembers2.begin(); it != listOfMembers2.end(); ++it)
-	{
-		int memberFd= *it;
-		 std::cout << *it << " ";
-		for(std::map<int,Client>::iterator its = _Clients.begin(); its != _Clients.end(); its++)
-		{
-			if (its->second.getFd() == memberFd)
-			{
-				std::cout<<"Client in channel :"<<channel.getName()<<", user with invitation :"<<its->second.getNickname()<<std::endl;
-				//send(memberFd,message.c_str(),message.size(),0);
-			}
-		}
-	}
-	std::cout<<"first cond: "<<*(channel.getInvited().find(client.getFd()))<< "second cond :"<<*(channel.getInvited().end())<<std::endl;
-	if(channel.getInvited().find(client.getFd()) == channel.getInvited().end())
-		std::cout<<"CHANNEL: DIDNT FOUND CLIENT IN INVITED" <<std::endl;
-	else if (channel.getInvited().find(client.getFd()) != channel.getInvited().end())
-		std::cout<<"CHANNEL: FOUND CLIENT IN INVITED" <<std::endl;
-
-
-	// Example: find if the set contains the value 6
-    int valueToFind = client.getFd();
-    std::set<int>::iterator it = listOfMembers2.find(client.getFd());
-
-    if (it != listOfMembers2.end()) {
-        // Found the value in the set
-        std::cout << "Found " << valueToFind << " in the set.\n";
-    } else {
-        // Didn't find the value in the set
-        std::cout << valueToFind << " not found in the set.\n";
-
-    }
-
+	
 	std::set<int> listOfInvited = channel.getInvited();
 	std::set<int>::iterator itInvited = listOfInvited.find(client.getFd());
+
 	if (channel.get_l() && static_cast<int>(channel.getMembers().size()) == channel.getClientLimit())
 	{
 		_sendMessage(client, ERR_CHANNELISFULL(client.getNickname(),channel.getName()));
 		return (false);
 	}
-
-	//if (channel.get_i() && channel.getInvited().find(client.getFd()) == channel.getInvited().end())
 	if (channel.get_i() && itInvited == listOfInvited.end())
 	{
 		std::cout<<"ERROR INVITACION"<<std::endl;

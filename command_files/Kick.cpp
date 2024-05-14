@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:43:50 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:11:09 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,10 @@ void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
 	if (parsedCommand.size() < 3)
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0]))); ///.
 
-
     std::vector<std::string> listOfChannels = _splitString(parsedCommand[1], ',');
     std::vector<std::string> listOfUsersToKick = _splitString(parsedCommand[2], ',');
-    std::string comment = "";
-	for (size_t j = 3;j < parsedCommand.size();j++)
-		comment += " " + parsedCommand[j];
-
-	if (listOfChannels.size() > 1 && listOfChannels.size() != listOfUsersToKick.size())
+	
+	if ((listOfChannels.size() > 1 && listOfChannels.size() != listOfUsersToKick.size()) || (parsedCommand.size() > 3 && parsedCommand[3][0] != ':'))
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
 	//one server to more clients
     if (listOfChannels.size() == 1)
@@ -50,7 +46,7 @@ void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
         if (!channel.isOperator(client.getFd()))
 		    return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), channel.getName())));
         for (size_t i = 0; i < listOfUsersToKick.size(); ++i)
-            _kickUser(channel, client, listOfUsersToKick[i], comment);
+            _kickUser(channel, client, listOfUsersToKick[i], parsedCommand[3]);
     }
 	else // as many channel parameters as there are user parameters.
 	{
@@ -73,7 +69,7 @@ void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
 				_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), channel.getName()));
 				continue;
 			}
-			_kickUser(channel, client, listOfUsersToKick[i], comment);
+			_kickUser(channel, client, listOfUsersToKick[i], parsedCommand[3]);
 		}
 	}
 }

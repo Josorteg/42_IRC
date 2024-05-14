@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:40:20 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:15:36 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand
 	//TOPIC #abc :New topic name
 	//TOPIC #test ; check the topic for #test.
 
-	if (parsedCommand.size() < 2)
+	if (parsedCommand.size() < 2 || (parsedCommand.size() > 2 && parsedCommand[2][0] != ':'))
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
 	if (!_channelExists(parsedCommand[1]))
 		return(_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[0])));
@@ -27,9 +27,6 @@ void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand
 	Channel& channel = _getChannelbyname((parsedCommand[1]));
 	std::set<int> listOfMembers = channel.getMembers();
 	std::string message;
-	std::string topic = "";
-	for (size_t j = 2;j < parsedCommand.size();j++)
-		topic += " " + parsedCommand[j];
 
 	if (!channel.isMember(client.getFd()))
 		return(_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), channel.getName())));
@@ -42,11 +39,10 @@ void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand
 	}
 	if (channel.get_t() == true && !channel.isOperator(client.getFd()))
 		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), channel.getName())));
-
-	channel.setTopic(topic);
-
+		
+	channel.setTopic(parsedCommand[2]);
 	message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName();
 	if (!channel.getTopic().empty())
-		message += channel.getTopic();
+		message += " " + channel.getTopic();
 	_sendMessage(channel, 0, message);
 }

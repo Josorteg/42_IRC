@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 19:18:00 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:05:38 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,20 @@ void Server::_privmsgServer(Client &client, std::vector<std::string> parsedComma
 	/* PRIVMSG JohnDoe,Mimi :Hello, how are you? */
 
 	std::string message;
-	std::string text = "";
 
 	if (parsedCommand.size() > 1 && parsedCommand[1][0] == ':')
 		return(_sendMessage(client, ERR_NORECIPIENT(_getServername())));
-	if (parsedCommand.size() < 3)
+	if (parsedCommand.size() < 3 || parsedCommand[2][0] != ':')
 		return(_sendMessage(client, ERR_NOTEXTTOSEND(_getServername())));
 
 	std::vector<std::string> receivers = _splitString(parsedCommand[1], ',');
-	for (size_t j = 2;j < parsedCommand.size();j++)
-		text += " " + parsedCommand[j];
+		
 	for (size_t i = 0; i < receivers.size(); ++i)
 	{
 		if (receivers[i][0] == '#') // check if is a channel
-			_handleMessageToChannel(client, receivers[i], text);
+			_handleMessageToChannel(client, receivers[i], parsedCommand[2]);
 		else
-			_handleMessageToUser(client, receivers[i], text);
+			_handleMessageToUser(client, receivers[i], parsedCommand[2]);
 	}
 }
 
@@ -41,7 +39,7 @@ void Server::_handleMessageToUser(Client &client, std::string receiver, std::str
 	int clientToSendMessageFd = _getClientfdByName(receiver);
 	if (clientToSendMessageFd == 0)
 		return(_sendMessage(client, ERR_NOSUCHNICK(_getServername(), receiver)));
-	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
+	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + " " + message;
 	std::map<int, Client>::iterator it = _Clients.find(clientToSendMessageFd);
 	_sendMessage(it->second, message);
 }
@@ -53,7 +51,7 @@ void Server::_handleMessageToChannel(Client &client, std::string receiver, std::
 
 	Channel& channel = _getChannelbyname(receiver);
 	std::set<int> listOfMembers = channel.getMembers();
-	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + message;
+	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + " " + message;
 
 	if (!channel.isMember(client.getFd()))
 		return(_sendMessage(client, ERR_CANNOTSENDTOCHAN(_getServername(), receiver)));

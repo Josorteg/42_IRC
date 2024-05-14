@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/14 17:35:19 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:19:18 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Server
 		bool _ProcessCommand(std::string command, int fd);
 		std::vector<std::string> _splitString(std::string line, char delimiter);
 		std::vector<std::string> _splitString(std::string line, std::string delimiter);
+		std::vector<std::string> _splitString(std::string line, char delimiter, char sign);
 		void _rmClient(const Client &c);
 
 		std::string _getPassword(void){return this->_password;};

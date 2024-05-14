@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/06 17:40:34 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/13 19:47:51 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:08:06 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,16 @@ void Server::_partServer(Client &client, std::vector<std::string> parsedCommand)
 
     std::string message;
 
-	if (parsedCommand.size() < 2)
+	if (parsedCommand.size() < 2 || (parsedCommand.size() > 2 && parsedCommand[2][0] != ':'))
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
 
 	std::vector<std::string> listOfChannels = _splitString(parsedCommand[1], ',');
+	
 	std::string reason = "";
 	if (parsedCommand.size() > 2)
-	{
-		for (size_t j = 2;j < parsedCommand.size();j++)
-			reason += " " + parsedCommand[j];
-	}
+		reason = parsedCommand[2];
 	else
-		reason = " :left channel";
+		reason = ":left channel";
 
 	for (size_t i = 0; i < listOfChannels.size(); ++i)
 	{
@@ -42,9 +40,7 @@ void Server::_partServer(Client &client, std::vector<std::string> parsedCommand)
 		Channel& channel = _getChannelbyname(listOfChannels[i]);
 		if (!channel.isMember(client.getFd()))
 			return(_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), listOfChannels[i])));
-		std::cout<< "PART reason" << reason << std::endl;
-		message = ":" + client.getNickname() + "!~" + client.getHostname() + " PART " + channel.getName() + reason;
-		std::cout<< "PART message" << message << std::endl;
+		message = ":" + client.getNickname() + "!~" + client.getHostname() + " PART " + channel.getName() + " " + reason;
 		_sendMessage(channel,0,message);
 		channel.removeMember(client.getFd());
 		channel.removeOperator(client.getFd());

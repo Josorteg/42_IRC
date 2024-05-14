@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/14 18:09:49 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/14 20:54:46 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,13 +153,11 @@ void Server::_Request(int fd)
 	{
 		std::cout<< "Client left: " << fd << std::endl;
 		_rmClient(fd);
-		//funcion para liberar FD's (poll, lista de clientes y cerrrar FD)
 		close(fd);
 	}
-	if (bytes < 0)
+	else if (bytes < 0)
 	{
 		std::cerr<<"error disconection"<<std::endl;
-		//funcion para liberar FD's (poll, lista de clientes y cerrrar FD)
 		_rmClient(fd);
 		close(fd);
 	}
@@ -249,6 +247,41 @@ std::vector<std::string>  Server::_splitString(std::string line, std::string del
 	return lines;
 }
 
+//split a string by a delimiter, but trim and if has : after space(delimiter), then everything after :(sign) is one string
+std::vector<std::string>  Server::_splitString(std::string line, char delimiter, char sign)
+{
+	std::vector<std::string> lines;
+	std::istringstream ss(line);
+	std::string token;
+
+	std::string subline;
+	size_t start = 0, end;
+	while ((end = line.find(delimiter, start)) != std::string::npos)
+	{
+		subline = line.substr(start, end-start);
+		if (!subline.empty())
+		{
+			if (subline[0] == sign)
+				break;
+			else	
+				lines.push_back(subline);
+		}
+		start = end + 1;
+	}
+	subline = line.substr(start);
+	if (!subline.empty())
+		lines.push_back(subline);
+
+	//just for print
+	std::cout << "_splitString: Splitted string: " << std::endl;
+	for (std::vector<std::string>::iterator it = lines.begin(); it != lines.end(); ++it)
+   	{
+		std::cout << "|" << *it << "|" << std::endl;
+	}
+	
+	return lines;
+}
+
 // static bool	checkInit(Client *client, cmd &c)
 // {
 // 	if (!client->Autenticated() || c.args[0] == "PASS" ||\
@@ -260,7 +293,7 @@ std::vector<std::string>  Server::_splitString(std::string line, std::string del
 bool Server::_ProcessCommand(std::string command, int fd)
 {
 	std::vector<std::string> parsedCommand;
-	parsedCommand = _splitString(command, ' ');
+	parsedCommand = _splitString(command, ' ', ':');
 
 	std::map<int, Client>::iterator it = _Clients.find(fd);
 	if (it != _Clients.end())
