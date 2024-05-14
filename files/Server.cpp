@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/13 18:39:48 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/14 18:09:49 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,11 +140,6 @@ void replaceAll(std::string& str, const std::string& from, const std::string& to
     }
 }
 
-
-
-
-
-
 void Server::_Request(int fd)
 {
 	char buffer[1024];
@@ -191,7 +186,10 @@ void Server::_Request(int fd)
 				{
 					std::cout<<"Buffer to command after 0: "<<commands[0]<<std::endl;
 					if(_ProcessCommand(commands[i], fd) == false)
+					{
+						_rmClient(it->second);
 						return;
+					}
 				}
 				//this is not working, no \r\n in commnads.back, we are splitting by \r\n
 				if (commands.back() == "\r\n")
@@ -251,6 +249,14 @@ std::vector<std::string>  Server::_splitString(std::string line, std::string del
 	return lines;
 }
 
+// static bool	checkInit(Client *client, cmd &c)
+// {
+// 	if (!client->Autenticated() || c.args[0] == "PASS" ||\
+// 	(!client->Registered() && c.args[0] != "USER" && c.args[0] != "NICK"))
+// 		return true;
+// 	return false;
+// }
+
 bool Server::_ProcessCommand(std::string command, int fd)
 {
 	std::vector<std::string> parsedCommand;
@@ -262,34 +268,36 @@ bool Server::_ProcessCommand(std::string command, int fd)
 		std::cout<<"---Hello here is time to process this command: "<<command<<"|"<<std::endl;
 
 		if (parsedCommand[0] == "CAP")
-		{
 			return (true);
-		}
 		if (parsedCommand[0] == "QUIT")
-		{
-			_rmClient(it->second);
 			return (false);
-		}
-		if (parsedCommand[0] == "PASS")//mas condiciones falta, chequear la autentificacion
+		if (parsedCommand[0] == "PASS")
 		{
-			if (_passServer(it->second,parsedCommand[1]) == false)
-			{
-				_rmClient(it->second);
+			if (_passServer(it->second,parsedCommand) == false)
 				return(false);
-			}
-			//std::cout<<"checking password"<<std::endl;
+			return(true);
 		}
+		if (!it->second.getHasPassword())
+		{
+			_sendMessage(it->second, "You have to first enter a password. You cannot execute command: " + parsedCommand[0]);
+			return(true);
+		}
+		if (parsedCommand[0] == "USER")
+		{
+			if (_userServer(it->second,parsedCommand) == false)
+				return(false);
+			return(true);
+		}
+		if (parsedCommand[0] == "NICK")
+		{
+			if (_nickServer(it->second,parsedCommand) == false)
+				return(false);
+			return(true);
+		}
+		if (it->second.getIsRegistered())
+			_exe(it->second, parsedCommand);
 		else
-		{
-			if (it->second.getHasPassword())
-				_exe(it->second, parsedCommand);
-			else
-			{
-				std::cout<<"Incorrect Password"<<std::endl;
-				_rmClient(it->second);
-				return(false);
-			}
-		}
+			_sendMessage(it->second, "You are not registered. You cannot execute command: " + parsedCommand[0]);
 	}
 	return(true);
 }
@@ -335,13 +343,23 @@ void Server::_rmClient(const Client &c)
 
 }
 
-bool Server::_passServer(Client &client,std::string pass)
+bool Server::_passServer(Client &client, std::vector<std::string> parsedCommand)
 {
 	std::cout<<"checking password"<<std::endl;
-	if (pass == _getPassword())
+
+	if (client.getIsRegistered())
+	{
+		_sendMessage(client, ERR_ALREADYREGISTRED());
+		return(true);
+	}
+	if (parsedCommand.size() < 2)
+	{
+		_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0]));
+		return(false);
+	}
+	if (parsedCommand[1] == _getPassword())
 	{
 		client.setHasPassword(true);
-		//client.setAutentic(true);
 		std::cout<<"OK PASSWORD"<<std::endl;
 		return(true);
 	}
@@ -355,20 +373,14 @@ bool Server::_passServer(Client &client,std::string pass)
 
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
+	std::string cmds[10] = {"JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART"};
 
-
-	std::string cmds[12] = { "USER", "NICK", "JOIN","WHO", "MODE", "PRIVMSG", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART"};
-// "NAMES", };
-	void	(Server::*f[12])(Client &client, std::vector<std::string> parsedCommand) = \
-	{&Server::_userServer, &Server::_nickServer,  &Server::_joinServer, &Server::_whoServer, \
+	void	(Server::*f[10])(Client &client, std::vector<std::string> parsedCommand) = \
+	{&Server::_joinServer, &Server::_whoServer, \
 	 &Server::_modeServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer, \
 	 &Server::_topicServer, &Server::_kickServer, &Server::_pingServer,&Server::_partServer};
-	 // &Server::_names,
 
-
-	 ///we should check somewhere if client is registered!!!
-
-	 for (int i = 0; i < 12; i++)
+	 for (int i = 0; i < 10; i++)
 	 {
 		if (parsedCommand[0] == cmds[i])
 		{
@@ -377,6 +389,7 @@ void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 			return ;
 		}
 	 }
+	 _sendMessage(client, "Command does not exists");
 }
 
 void Server::_setTime() {
