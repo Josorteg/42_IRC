@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/14 19:19:18 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/15 18:32:56 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class Server
 	private:
 
 		void _NewClient(void);
-		void _Request(int fd);
+		void _Request(pollfd &poll);
 		bool _ProcessCommand(std::string command, int fd);
 		std::vector<std::string> _splitString(std::string line, char delimiter);
 		std::vector<std::string> _splitString(std::string line, std::string delimiter);

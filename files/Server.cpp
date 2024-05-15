@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
+/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/14 20:54:46 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/15 18:32:51 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,38 @@ void Server::RunServer(void)
 				else
 				{
 					std::cout<<"Prueba LEAK DE MEMORIA antes del request"<<std::endl;
-					_Request(_pollFds[it].fd);
+					_Request(_pollFds[it]);
 				}
 			}
+			//POLL out
+			if (_pollFds[it].revents & POLLOUT)
+			{
+				int fd = _pollFds[it].fd;
+				std::map<int, Client>::iterator its = _Clients.find(fd);
+				if (its != _Clients.end())
+				{
+					std::cout<<"Buffer : "<<its->second.getBuffer()<<std::endl;
+					std::vector<std::string> commands;
+					std::string line = its->second.getBuffer();
+					commands = _splitString(line, "\r\n");
+					for (size_t i = 0; i < commands.size() - 1; ++i)
+					{
+						std::cout<<"Buffer to command after 0: "<<commands[0]<<std::endl;
+						if(_ProcessCommand(commands[i], fd) == false)
+						{
+							_rmClient(its->second);
+							return;
+						}
+					}
+					//this is not working, no \r\n in commnads.back, we are splitting by \r\n
+					if (commands.back() == "\r\n")
+						its->second.setBuffer("");
+					else
+						its->second.setBuffer(commands.back());
+					_pollFds[it].events = POLLIN;
+				}
+			}
+
 			if (_pollFds[it].fd != _serverFd )
 			{
 				std::map<int, Client>::iterator its = _Clients.find(_pollFds[it].fd);
@@ -131,24 +160,22 @@ void Server::_NewClient(void)
 	_Clients.insert(std::make_pair(clientFd, Client(clientFd)));
 	std::cout<<"Registered a new client with fd: "<<clientFd<<std::endl;
 }
-void replaceAll(std::string& str, const std::string& from, const std::string& to) {
-    size_t start_pos = 0;
-    while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
-        str.replace(start_pos, from.length(), to);
-        // Mover la posición de inicio después del reemplazo
-        start_pos += to.length();
-    }
-}
+// void replaceAll(std::string& str, const std::string& from, const std::string& to) {
+//     size_t start_pos = 0;
+//     while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+//         str.replace(start_pos, from.length(), to);
+//         // Mover la posición de inicio después del reemplazo
+//         start_pos += to.length();
+//     }
+//}
 
-void Server::_Request(int fd)
+void Server::_Request(pollfd &poll)
 {
 	char buffer[1024];
 	memset(buffer,0,sizeof(buffer));
-
+	int fd = poll.fd;
 	ssize_t bytes = recv(fd, buffer, sizeof(buffer) - 1 , 0);
-
 	std::cout<<"Request from client with fd: "<<fd<<std::endl;
-
 	if (bytes == 0)
 	{
 		std::cout<< "Client left: " << fd << std::endl;
@@ -170,32 +197,17 @@ void Server::_Request(int fd)
 		{
    		 	it->second.setBuffer(it->second.getBuffer().append(buffer));
 			std::cout<<"Buffer : "<<it->second.getBuffer()<<std::endl;
-			//vamos a escribir commands entero
 			std::vector<std::string> commands;
 			std::string line = it->second.getBuffer();
-			replaceAll(line,"\\n","\n");
-			replaceAll(line,"\\r","\r");
 			commands = _splitString(line, "\r\n");
 
 			if (!commands.empty())
 			{
 				std::cout<<"Buffer to command before: "<<commands[0]<<std::endl;
-				for (size_t i = 0; i < commands.size() - 1; ++i)
-				{
-					std::cout<<"Buffer to command after 0: "<<commands[0]<<std::endl;
-					if(_ProcessCommand(commands[i], fd) == false)
-					{
-						_rmClient(it->second);
-						return;
-					}
-				}
-				//this is not working, no \r\n in commnads.back, we are splitting by \r\n
-				if (commands.back() == "\r\n")
-					it->second.setBuffer("");
-				else
-					it->second.setBuffer(commands.back());
+				if (commands.size() > 1)
+					poll.events = POLLOUT;
 			}
-   		}
+		}
 		else
 		{
 			std::cout << "Client with fd " << fd << " not found." << std::endl;
@@ -263,7 +275,7 @@ std::vector<std::string>  Server::_splitString(std::string line, char delimiter,
 		{
 			if (subline[0] == sign)
 				break;
-			else	
+			else
 				lines.push_back(subline);
 		}
 		start = end + 1;
@@ -278,7 +290,7 @@ std::vector<std::string>  Server::_splitString(std::string line, char delimiter,
    	{
 		std::cout << "|" << *it << "|" << std::endl;
 	}
-	
+
 	return lines;
 }
 
