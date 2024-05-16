@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/16 13:15:08 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:56:52 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,32 +90,8 @@ void Server::RunServer(void)
 			//POLL out
 			if (_pollFds[it].revents & POLLOUT)
 			{
-				int fd = _pollFds[it].fd;
-				std::map<int, Client>::iterator its = _Clients.find(fd);
-				if (its != _Clients.end())
-				{
-					std::cout<<"Buffer : "<<its->second.getBuffer()<<std::endl;
-					std::vector<std::string> commands;
-					std::string line = its->second.getBuffer();
-					commands = _splitString(line, "\r\n");
-					for (size_t i = 0; i < commands.size() - 1; ++i)
-					{
-						std::cout<<"Buffer to command after 0: "<<commands[0]<<std::endl;
-						if(_ProcessCommand(commands[i], fd) == false)
-						{
-							_rmClient(its->second);
-							return;
-						}
-					}
-					//this is not working, no \r\n in commnads.back, we are splitting by \r\n
-					if (commands.back() == "\r\n")
-						its->second.setBuffer("");
-					else
-						its->second.setBuffer(commands.back());
-					_pollFds[it].events = POLLIN;
-				}
+				_Response(_pollFds[it]);
 			}
-
 			if (_pollFds[it].fd != _serverFd )
 			{
 				std::map<int, Client>::iterator its = _Clients.find(_pollFds[it].fd);
@@ -135,6 +111,35 @@ void Server::RunServer(void)
         _pollFds.erase(_pollFds.begin()+i);
     }
 	close(_serverFd);
+}
+
+void Server::_Response(pollfd &poll)
+{
+
+	int fd = poll.fd;
+	std::map<int, Client>::iterator its = _Clients.find(fd);
+	if (its != _Clients.end())
+	{
+		std::cout<<"Buffer : "<<its->second.getBuffer()<<std::endl;
+		std::vector<std::string> commands;
+		std::string line = its->second.getBuffer();
+		commands = _splitString(line, "\r\n");
+		for (size_t i = 0; i < commands.size() - 1; ++i)
+		{
+			std::cout<<"Buffer to command after 0: "<<commands[0]<<std::endl;
+			if(_ProcessCommand(commands[i], fd) == false)
+			{
+				_rmClient(its->second);
+				return;
+			}
+		}
+		//this is not working, no \r\n in commnads.back, we are splitting by \r\n
+		if (commands.back() == "\r\n")
+			its->second.setBuffer("");
+		else
+			its->second.setBuffer(commands.back());
+		poll.events = POLLIN;
+	}
 }
 
 void Server::_NewClient(void)

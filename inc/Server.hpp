@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/15 18:32:56 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:56:12 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Server
 
 		void _NewClient(void);
 		void _Request(pollfd &poll);
+		void _Response(pollfd &poll);
 		bool _ProcessCommand(std::string command, int fd);
 		std::vector<std::string> _splitString(std::string line, char delimiter);
 		std::vector<std::string> _splitString(std::string line, std::string delimiter);
