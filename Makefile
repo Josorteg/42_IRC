@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+         #
+#    By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/05/14 17:54:50 by josorteg         ###   ########.fr        #
+#    Updated: 2024/05/17 18:54:47 by mmoramov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,8 +22,8 @@ CFLAGS = -Werror -Wextra -Wall -std=c++98
 #----------------------------SOURCES-------------------------------------------#
 
 FILES = main Server Client Channel
-MODE_FILES = ModeFlagI ModeFlagK ModeFlagT ModeFlagO ModeFlagL
-COMMAND_FILES = Nick User Join Whonames Mode Privmsg Invite Topic Kick Ping Part
+MODE_FILES = ModeFlagI ModeFlagK ModeFlagL ModeFlagO ModeFlagT
+COMMAND_FILES = Invite Ison Join Kick Mode Nick Part Pass Ping Privmsg Topic User Whonames
 
 #----------------------------PATHS---------------------------------------------#
 INC = -I ./inc

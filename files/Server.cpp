@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/16 17:56:52 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/17 18:51:16 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -393,33 +393,7 @@ void Server::_rmClient(const Client &c)
 
 }
 
-bool Server::_passServer(Client &client, std::vector<std::string> parsedCommand)
-{
-	std::cout<<"checking password"<<std::endl;
 
-	if (client.getIsRegistered())
-	{
-		_sendMessage(client, ERR_ALREADYREGISTRED());
-		return(true);
-	}
-	if (parsedCommand.size() < 2)
-	{
-		_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0]));
-		return(false);
-	}
-	if (parsedCommand[1] == _getPassword())
-	{
-		client.setHasPassword(true);
-		std::cout<<"OK PASSWORD"<<std::endl;
-		return(true);
-	}
-	else
-	{
-		std::cout<<"WRONG PASSWORD"<<std::endl;
-		return(false);
-		//_rmClient(client);
-	}
-}
 
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {

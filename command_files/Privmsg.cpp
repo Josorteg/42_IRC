@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/14 20:05:38 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/17 18:53:19 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,18 +58,3 @@ void Server::_handleMessageToChannel(Client &client, std::string receiver, std::
 	_sendMessage(channel,client.getFd(),message);
 }
 
-void Server::_isonServer(Client &client, std::vector<std::string> parsedCommand)
-{
-	std::string message;
-	std::string listOfClients = "";
-
-	if (parsedCommand.size() < 2)
-		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
-	for (size_t i = 1; i < parsedCommand.size(); ++i)
-	{
-		if (_getClientfdByName(parsedCommand[i]) != 0)
-			listOfClients += parsedCommand[i] + " ";
-	}
-	std::cout<<"_isonServer: message is " << message << std::endl;
-	_sendMessage(client, RPL_ISON(_getServername(), client.getNickname(),listOfClients));
-}
