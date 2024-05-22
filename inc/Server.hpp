@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/16 17:56:12 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/22 20:08:20 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ class Server
 		void _kickServer(Client &client, std::vector<std::string> parsedCommand);
 		void _pingServer(Client &client, std::vector<std::string> parsedCommand);
 		void _partServer(Client &client, std::vector<std::string> parsedCommand);
+		void _botServer(Client &client, std::vector<std::string> parsedCommand);
 
 		//Channels
 		size_t _channelExists(std::string name);

@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/17 18:51:16 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/22 20:08:04 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -397,14 +397,14 @@ void Server::_rmClient(const Client &c)
 
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
-	std::string cmds[11] = {"JOIN","WHO", "MODE", "PRIVMSG","NOTICE", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART"};
+	std::string cmds[12] = {"JOIN","WHO", "MODE", "PRIVMSG","NOTICE", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART", "BOT"};
 
-	void	(Server::*f[11])(Client &client, std::vector<std::string> parsedCommand) = \
+	void	(Server::*f[12])(Client &client, std::vector<std::string> parsedCommand) = \
 	{&Server::_joinServer, &Server::_whoServer, \
 	 &Server::_modeServer, &Server::_privmsgServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer, \
-	 &Server::_topicServer, &Server::_kickServer, &Server::_pingServer,&Server::_partServer};
+	 &Server::_topicServer, &Server::_kickServer, &Server::_pingServer,&Server::_partServer,&Server::_botServer};
 
-	 for (int i = 0; i < 11; i++)
+	 for (int i = 0; i < 12; i++)
 	 {
 		if (parsedCommand[0] == cmds[i])
 		{

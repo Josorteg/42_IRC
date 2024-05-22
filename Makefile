@@ -6,7 +6,7 @@
 #    By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/16 18:17:17 by josorteg          #+#    #+#              #
-#    Updated: 2024/05/17 18:54:47 by mmoramov         ###   ########.fr        #
+#    Updated: 2024/05/22 20:07:14 by mmoramov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ CFLAGS = -Werror -Wextra -Wall -std=c++98
 
 FILES = main Server Client Channel
 MODE_FILES = ModeFlagI ModeFlagK ModeFlagL ModeFlagO ModeFlagT
-COMMAND_FILES = Invite Ison Join Kick Mode Nick Part Pass Ping Privmsg Topic User Whonames
+COMMAND_FILES = Bot Invite Ison Join Kick Mode Nick Part Pass Ping Privmsg Topic User Whonames
 
 #----------------------------PATHS---------------------------------------------#
 INC = -I ./inc

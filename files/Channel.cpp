@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:06 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:14 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/22 20:24:05 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Channel::Channel(Server *serv,std::string name,Client &client)
 {
 	this->_name = name;
 	_server=serv;
+	_botActive = 0;
 	_members.insert(client.getFd());
 	_invited.insert(client.getFd());
 	_operators.insert(client.getFd());

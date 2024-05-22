@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 19:17:53 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/22 20:26:36 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ class Channel
 		bool isOperator(int fd) const {return _operators.find(fd) != _operators.end();};
 		bool isInvited(int fd) const {return _invited.find(fd) != _invited.end();};
 		bool isMember(int fd) const {return _members.find(fd) != _members.end();};
+		bool getBotActive(void){return this->_botActive;};
+		void setBotActive(bool botActive){this->_botActive = botActive;};
 
 	private:
 
@@ -64,6 +66,8 @@ class Channel
 		std::set<int> _members;
 		std::set<int> _operators;
 		std::set<int> _invited;
+		bool _botActive;
+		std::map<int, int> _badWordsCounter;
 
 		bool	_i;
 		bool	_k;

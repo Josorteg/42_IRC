@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 18:22:54 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/14 19:54:25 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/22 20:39:07 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,3 +85,7 @@
 
 //KICK
 # define ERR_USERNOTINCHANNEL(servername, nickname, channel)(std::string(":" + servername + " 441 " + nickname + " " + channel + " :They aren't on that channel"))
+
+//BOT
+# define ERR_BOT_WRONGPASS(servername, nickname, channel)(std::string(":" + servername + " " + nickname + " " + channel + " :incorrect password"))
+# define ERR_BOT_ISACTIVE(servername, nickname, channel)(std::string(":" + servername + " " + nickname + " " + channel + " :bot is already active"))
