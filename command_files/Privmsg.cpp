@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/17 18:53:19 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/23 17:46:59 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,10 @@ void Server::_handleMessageToChannel(Client &client, std::string receiver, std::
 {
 	if (!_channelExists(receiver))
 		return(_sendMessage(client, ERR_NOSUCHCHANNEL((receiver))));
-
 	Channel& channel = _getChannelbyname(receiver);
+	
+	if (channel.getBotActive() == true)
+		_botchecker(client, channel, message);
 	std::set<int> listOfMembers = channel.getMembers();
 	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + " " + message;
 

@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/22 20:08:04 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/23 19:00:28 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -501,6 +501,10 @@ std::string Server::_getChannelMembersTxt(Channel &channel, std::string delimite
 		if (withSymbol == 1 && channel.isOperator(it->second.getFd()))
 				listOfClients += "@";
 		listOfClients += it->second.getNickname() + delimiter;
+	}
+	if (channel.getBotActive() == true)
+	{
+		listOfClients += "BOT"+ delimiter;
 	}
 	listOfClients.erase(listOfClients.end()-1);
 	return listOfClients;

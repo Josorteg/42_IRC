@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:05:32 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/22 20:44:29 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/23 19:08:01 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,15 @@
 void Server::_botServer(Client &client, std::vector<std::string> parsedCommand)
 {
     /* !!!! call it with 4 parameters. We need also channel. Its working. Example:
-       BOT SET   #test password - set on bot with correct password
-       BOT UNSET #test password - unset bot with correct password
+       BOT ON  #test password - ON on bot with correct password
+       BOT OFF #test password - OFF bot with correct password
      */
+    std::set<int> listOfMembers;
     std::string password = "42";
     
     if (parsedCommand.size() < 4)
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
-	if (parsedCommand[1] != "SET" && parsedCommand[1] != "UNSET")
+	if (parsedCommand[1] != "ON" && parsedCommand[1] != "OFF")
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS((parsedCommand[2]))));    
 	if (!_channelExists(parsedCommand[2]))
 		return(_sendMessage(client, ERR_NOSUCHCHANNEL((parsedCommand[2]))));
@@ -36,19 +37,90 @@ void Server::_botServer(Client &client, std::vector<std::string> parsedCommand)
 	if (parsedCommand[3] != password)
 		return(_sendMessage(client, ERR_BOT_WRONGPASS(_getServername(), client.getNickname(), channel.getName())));
 
-    std::string message = ":" + client.getNickname() + "!" + client.getHostname() + " " + parsedCommand[0] + " " + channel.getName() + " ";
-    if (parsedCommand[1] == "SET")
+    std::string message = ":BOT! PRIVMSG " + parsedCommand[0] + " " + channel.getName() + " ";
+    if (parsedCommand[1] == "ON")
     {
         if (channel.getBotActive() == true)
             return(_sendMessage(client, ERR_BOT_ISACTIVE(_getServername(), client.getNickname(), channel.getName()))); 
         channel.setBotActive(true);
-		message += "Bot has been set"; //todo Jose what you want 	    
+		    message += "Bot has been ON"; //to do Jose what you want 	
+        
+      std::vector<std::string> whoParsedCommand;
+	    whoParsedCommand.push_back("WHO");
+	    whoParsedCommand.push_back(channel.getName());
+	    listOfMembers = channel.getMembers();
+	    for (std::set<int>::iterator i = listOfMembers.begin(); i != listOfMembers.end(); ++i)
+	    {
+	      	int a= *i;
+	    	  std::map<int, Client>::iterator it = _Clients.find(a);
+	      	_whoServer(it->second,whoParsedCommand);
+	    }
+  
+			std::string listOfClients = _getChannelMembersTxt(channel, " ", 1);
+      _sendMessage(channel, 0, RPL_NAMREPLY(_getServername(),"BOT",channel.getName(),listOfClients));
+			_sendMessage(channel, 0, RPL_ENDOFNAMES(channel.getName()));
     }
-    else if (parsedCommand[1] == "UNSET")
+    else if (parsedCommand[1] == "OFF")
     {
         channel.setBotActive(false);
-        message += "Bot has been unset"; //todo Jose what you want 
+        message += "Bot has been OFF"; //to do Jose what you want 
     }
     _sendMessage(channel, 0, message);
 
 }
+
+int badWordSeeker(std::vector<std::string> badWordList,std::string &message) 
+{
+  	 std::size_t pos = 0;
+     int result = 0;
+
+     std::cout<<"badWordSeeker message before: "<< message << std::endl;
+     
+    for (std::vector<std::string>::const_iterator it = badWordList.begin(); it != badWordList.end(); ++it)
+    {
+        std::string badWord = *it;
+        std::string replaceWord = "*";
+        pos = 0;
+        
+        std::cout<<"badWordSeeker message bad word to search: "<< badWord << std::endl;
+        
+		    while ( (pos = message.find(badWord, pos)) != std::string::npos )
+		    {
+		    	result = 1;
+          message.erase(pos,badWord.length());
+          for (size_t i = 0; i < badWord.length(); i++)
+			        message.insert(pos,replaceWord);
+			    pos += badWord.length();
+          std::cout<<"badWordSeeker message bad word found: "<< badWord << std::endl;
+		    }
+	  }
+
+    std::cout<<"badWordSeeker message after: "<< message << std::endl;
+    return (result);
+}
+
+
+void Server::_botchecker(Client &client, Channel &channel, std::string &message) {
+
+       std::string reply;
+       std::vector<std::string> badWordList; 
+      badWordList.push_back("mierda");
+      badWordList.push_back("cabrón");
+      badWordList.push_back("puta");
+
+      if (!badWordSeeker(badWordList, message))
+        return;
+      channel.addToBotCounter(client);
+      if (channel.getBadWordCounter(client) >= 3)
+      {
+        reply =  ":" + client.getNickname() + " WAS KICKED " + channel.getName() + " " + client.getNickname() + " from channel " +  channel.getName();   
+      }
+      else
+      {
+        reply =  ":" + client.getNickname() + "You are using bad words " + client.getNickname() + " its the " +  static_cast<char>(channel.getBadWordCounter(client)) + " time you use a badword.";
+      }
+      _sendMessage(client, reply);
+      
+       std::cout<<"_botchecker: "<< client.getNickname() << " " << channel.getName() << std::endl;
+}
+

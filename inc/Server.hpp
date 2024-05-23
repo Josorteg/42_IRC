@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/22 20:08:20 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/23 17:47:47 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,9 @@ class Server
 
 		//KICK
 		void _kickUser(Channel &channel, Client &client, std::string nickname, std::string comment);
+
+		//BOT
+		void _botchecker(Client &client, Channel &channel, std::string &message);
 
 		std::map<int, Client> _Clients;
 		std::vector<pollfd> _pollFds;

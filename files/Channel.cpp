@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:06 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/22 20:24:05 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/23 18:37:06 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,31 @@ void Channel::removeOperator(Client client)
 {
 	this->_operators.erase(client.getFd());
 }
+
+
+void Channel::addToBotCounter(Client client)
+{
+	for (std::map<int, int>::iterator it = _badWordsCounter.begin(); it != _badWordsCounter.end(); ++it)
+   	{
+		if (it->first == client.getFd())
+		{
+			it->second++;
+			return;
+		}
+	}
+	this->_badWordsCounter.insert(std::make_pair(client.getFd(), 1));
+}
+
+int Channel::getBadWordCounter(Client client)
+{
+	for (std::map<int, int>::iterator it = _badWordsCounter.begin(); it != _badWordsCounter.end(); ++it)
+   	{
+		if (it->first == client.getFd())
+			return(it->second);
+	}
+	return 0;
+}
+
+
 
 Channel::~Channel(void){}

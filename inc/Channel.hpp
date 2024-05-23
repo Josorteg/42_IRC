@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/22 20:26:36 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/23 18:36:00 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ class Channel
 		void setPassword(std::string pass){ this->_password = pass;};
 		void setTopic(std::string topic){ this->_topic = topic;};
 		void setClientLimit(int limit){this->_clientLimit = limit;};
-
 		bool get_i(void){return this->_i;};
 		bool get_k(void){return this->_k;};
 		bool get_l(void){return this->_l;};
@@ -56,6 +55,8 @@ class Channel
 		bool isMember(int fd) const {return _members.find(fd) != _members.end();};
 		bool getBotActive(void){return this->_botActive;};
 		void setBotActive(bool botActive){this->_botActive = botActive;};
+		void addToBotCounter(Client client);
+		int getBadWordCounter(Client client);
 
 	private:
 
