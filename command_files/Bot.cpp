@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/22 20:05:32 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/23 19:08:01 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:02:07 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,15 @@ void Server::_botServer(Client &client, std::vector<std::string> parsedCommand)
 	if (parsedCommand[3] != password)
 		return(_sendMessage(client, ERR_BOT_WRONGPASS(_getServername(), client.getNickname(), channel.getName())));
 
-    std::string message = ":BOT! PRIVMSG " + parsedCommand[0] + " " + channel.getName() + " ";
+    std::string message; //= ":BOT! PRIVMSG " + parsedCommand[0] + " " + channel.getName() + " ";
     if (parsedCommand[1] == "ON")
     {
         if (channel.getBotActive() == true)
             return(_sendMessage(client, ERR_BOT_ISACTIVE(_getServername(), client.getNickname(), channel.getName()))); 
         channel.setBotActive(true);
-		    message += "Bot has been ON"; //to do Jose what you want 	
+        
+      std::string messageJOIN = ":BOT!~" + _getServername() + " JOIN " + channel.getName();
+	    _sendMessage(channel,0, messageJOIN);
         
       std::vector<std::string> whoParsedCommand;
 	    whoParsedCommand.push_back("WHO");
@@ -59,13 +61,17 @@ void Server::_botServer(Client &client, std::vector<std::string> parsedCommand)
 			std::string listOfClients = _getChannelMembersTxt(channel, " ", 1);
       _sendMessage(channel, 0, RPL_NAMREPLY(_getServername(),"BOT",channel.getName(),listOfClients));
 			_sendMessage(channel, 0, RPL_ENDOFNAMES(channel.getName()));
+
+      message = ":BOT!~" + client.getHostname() + " PRIVMSG " + channel.getName() + " " + ":Hello, from now bad words are forbidden. The third time you use a bad word, I will kick you";
+      _sendMessage(channel, 0, message);
     }
     else if (parsedCommand[1] == "OFF")
     {
         channel.setBotActive(false);
-        message += "Bot has been OFF"; //to do Jose what you want 
+        message = ":BOT!~" + client.getHostname() + " PART " + channel.getName() + " " + ":Bot was turned OFF";
+        _sendMessage(channel, 0, message);
     }
-    _sendMessage(channel, 0, message);
+    
 
 }
 
@@ -112,15 +118,24 @@ void Server::_botchecker(Client &client, Channel &channel, std::string &message)
         return;
       channel.addToBotCounter(client);
       if (channel.getBadWordCounter(client) >= 3)
-      {
-        reply =  ":" + client.getNickname() + " WAS KICKED " + channel.getName() + " " + client.getNickname() + " from channel " +  channel.getName();   
+      { 
+        reply = ":BOT KICK " + channel.getName() + " " + client.getNickname() + " :USE OF BAD WORDS";
+        _sendMessage(channel,0,reply);
       }
-      else
+      else if (channel.getBadWordCounter(client) == 2)
       {
-        reply =  ":" + client.getNickname() + "You are using bad words " + client.getNickname() + " its the " +  static_cast<char>(channel.getBadWordCounter(client)) + " time you use a badword.";
+        reply = ":BOT!" + client.getHostname() + " PRIVMSG " + channel.getName() + " ";
+	
+        reply += ":This is the second time you use a bad word. If you do it again, you will be kicked from the channel";
+        _sendMessage(client, reply);
       }
-      _sendMessage(client, reply);
-      
+      else if (channel.getBadWordCounter(client) == 1)
+      {
+        reply = ":BOT!" + client.getHostname() + " PRIVMSG " + channel.getName() + " ";
+	
+        reply += ":You are using bad words " + client.getNickname() + " its the first time you used a badword. Its forbidden";
+        _sendMessage(client, reply);
+      }
        std::cout<<"_botchecker: "<< client.getNickname() << " " << channel.getName() << std::endl;
 }
 
