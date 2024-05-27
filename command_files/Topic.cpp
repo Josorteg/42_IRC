@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:40:20 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/14 20:15:36 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:53:24 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand)
 {
-	std::cout<<"Hello i am in function _topicServer "<< client.getFd() << " " << parsedCommand[0] << std::endl;
-
 	//TOPIC #abc :New topic name
 	//TOPIC #test ; check the topic for #test.
 

@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:43:31 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/13 20:05:07 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:54:11 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void Server::_modeHandleInviteOnly (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag)
 {
-	std::cout<<"Hello i am in function _modeHandleInviteOnly"<< client.getFd() << " " << channel.getName()
-	 << " " << parsedFlag.first << " " << parsedFlag.second << std::endl;
-
 	if (parsedFlag.first[0] == '+')
 	{
 		channel.set_i(true);

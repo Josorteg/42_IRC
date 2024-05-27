@@ -3,22 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/13 18:11:50 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:53:43 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"./../inc/Includes.hpp"
 
-// if (parsedCommand[2].empty() || parsedCommand[2] == "b")
-	// {
-	// 	_sendMessage(client, RPL_CHANNELMODEIS(_getServername(),client.getNickname(),(parsedCommand[1])));
-	// 	_sendMessage(client, RPL_ENDOFBANLIST((parsedCommand[1])));
-	// }
-
-	/*
+/*
 	FLAGS WITH parameter
 	MODE #example-channel +o operator_nickname
 	MODE #example-channel -o operator_nickname
@@ -41,7 +35,7 @@
 
 	Note that there is a maximum limit of three (3) changes per command for modes that take a parameter.
 	 Parameters: <channel> *( ( "-" / "+" ) *<modes> *<modeparams> )
-	*/
+*/
 
 void Server::_modeExe(Client &client, Channel &channel, std::vector<std::pair<std::string, std::string> > parsedFlags)
 {

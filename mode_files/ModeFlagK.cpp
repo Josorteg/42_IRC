@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/03 19:44:04 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/13 19:42:47 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:54:20 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void Server::_modeHandlePassword (Client &client, Channel &channel, std::pair<std::string, std::string> parsedFlag)
 {
-    std::cout<<"Hello i am in function _modeHandlePassword"<< client.getFd() << " " << channel.getName()
-     << " " << parsedFlag.first << " " << parsedFlag.second << std::endl;
-
     if (parsedFlag.first[0] == '+')
     {
         if (parsedFlag.second == channel._getPassword())

@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:43:50 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/14 20:11:09 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:53:33 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void Server::_kickServer(Client &client, std::vector<std::string> parsedCommand)
 {
-    std::cout<<"Hello i am in function _kickServer "<< client.getFd() << " " << parsedCommand[0] << std::endl;
-
-
     //KICK <channel>{,<channel>} <user>{,<user>} [<comment>]
 
     //Response: The server responds to the KICK command by removing the specified user from the channel
