@@ -6,7 +6,7 @@
 /*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 10:04:35 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/14 18:06:59 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:13:22 by josorteg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ static bool	nickChecker(std::string nick)
 bool Server::_nickServer(Client &client, std::vector<std::string> parsedCommand)
 {
 	std::string message;
+	std::string oldNickname;
 
 	if (parsedCommand.size() < 2)
 	{
@@ -38,14 +39,28 @@ bool Server::_nickServer(Client &client, std::vector<std::string> parsedCommand)
 		_sendMessage(client, ERR_NICKNAMEINUSE(parsedCommand[1]));
 		return(false);
 	}
-	client.setNickname(parsedCommand[1]);
+
 	if (client.getIsRegistered())
 	{
+		oldNickname = client.getNickname();
+		client.setNickname(parsedCommand[1]);
+
 		message = "Nick was changed to : " + client.getNickname();
 		_sendMessage(client, message);
+
+		//:old_nickname!user@host NICK :new_nickname
+
+		message = ":" + oldNickname + "!" + client.getHostname() + " NICK :" + client.getNickname();
+		//_sendMessage(client, message);
+
+		for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
+   		{
+			_sendMessage(it->second, message);
+		}
 	}
 	else if (!client.getUsername().empty() && client.getHasPassword())
 	{
+		client.setNickname(parsedCommand[1]);
 		client.setIsRegistered(true);
 
 		_sendMessage(client, RPL_WELCOME(client.getNickname(), this->_getServername() ,client.getHostname()));
