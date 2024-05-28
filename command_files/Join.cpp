@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/14 19:45:34 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/28 19:02:08 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ bool Server::_joinExistingChannel(Client &client, Channel &channel)
 	std::set<int> listOfInvited = channel.getInvited();
 	std::set<int>::iterator itInvited = listOfInvited.find(client.getFd());
 
-	if (channel.get_l() && static_cast<int>(channel.getMembers().size()) == channel.getClientLimit())
+	if (channel.get_l() && static_cast<int>(channel.getMembers().size()) >= channel.getClientLimit())
 	{
 		_sendMessage(client, ERR_CHANNELISFULL(client.getNickname(),channel.getName()));
 		return (false);

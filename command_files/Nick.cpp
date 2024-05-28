@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 10:04:35 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/28 18:13:22 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/28 18:21:31 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,7 @@ bool Server::_nickServer(Client &client, std::vector<std::string> parsedCommand)
 		_sendMessage(client, RPL_CREATED(this->_getServername(),this->_getTime()));
 		_sendMessage(client, RPL_MYINFO(this->_getServername(),client.getNickname()));
 	}
+	else
+		client.setNickname(parsedCommand[1]);
 	return(true);
 }
