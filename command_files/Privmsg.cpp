@@ -6,11 +6,11 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 17:41:36 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/23 17:46:59 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:18:13 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"./../inc/Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 void Server::_privmsgServer(Client &client, std::vector<std::string> parsedCommand)
 {
@@ -24,10 +24,10 @@ void Server::_privmsgServer(Client &client, std::vector<std::string> parsedComma
 		return(_sendMessage(client, ERR_NOTEXTTOSEND(_getServername())));
 
 	std::vector<std::string> receivers = _splitString(parsedCommand[1], ',');
-		
+
 	for (size_t i = 0; i < receivers.size(); ++i)
 	{
-		if (receivers[i][0] == '#') // check if is a channel
+		if (receivers[i][0] == '#')
 			_handleMessageToChannel(client, receivers[i], parsedCommand[2]);
 		else
 			_handleMessageToUser(client, receivers[i], parsedCommand[2]);
@@ -48,15 +48,17 @@ void Server::_handleMessageToChannel(Client &client, std::string receiver, std::
 {
 	if (!_channelExists(receiver))
 		return(_sendMessage(client, ERR_NOSUCHCHANNEL((receiver))));
+
 	Channel& channel = _getChannelbyname(receiver);
-	
-	if (channel.getBotActive() == true)
-		_botchecker(client, channel, message);
 	std::set<int> listOfMembers = channel.getMembers();
-	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + " " + message;
 
 	if (!channel.isMember(client.getFd()))
 		return(_sendMessage(client, ERR_CANNOTSENDTOCHAN(_getServername(), receiver)));
+
+	if (channel.getBotActive() == true)
+		_botchecker(client, channel, message);
+
+	message = ":" + client.getNickname() + "!" + client.getHostname() + " PRIVMSG " + receiver + " " + message;
 	_sendMessage(channel,client.getFd(),message);
 }
 

@@ -6,12 +6,12 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 15:27:21 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/23 18:36:00 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:22:44 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include"./../inc/Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 class Client;
 class Server;
@@ -59,7 +59,6 @@ class Channel
 		int getBadWordCounter(Client client);
 
 	private:
-
 		Server *_server;
 		std::string _name;
 		std::string _password;

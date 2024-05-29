@@ -6,26 +6,25 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/23 17:47:47 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:25:57 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include"./../inc/Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 class Client;
 class Channel;
+
 class Server
 {
 	public:
-
 		Server(void);
 		~Server(void);
 		void SetServer(int port,std::string psw);
 		void RunServer();
 
 	private:
-
 		void _NewClient(void);
 		void _Request(pollfd &poll);
 		void _Response(pollfd &poll);
@@ -92,6 +91,4 @@ class Server
 		std::string _password;
 		std::string _servername;
 		std::string _time;
-
-
 };

@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/23 19:00:28 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:46:09 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,19 @@ Server::Server (void)
 	this->_setTime();
 }
 
+Server::~Server (void){}
+
 void Server::SetServer(int port,std::string psw)
 {
 	sockaddr_in serverAdress;
 	pollfd NewPoll;
 	this->_password = psw;
 	_serverFd = socket(AF_INET,SOCK_STREAM,0);
-	int optval = 1;//chat gpt sugerencia SO_REUSEADOR hace que se pueda reutilizar antes
-	setsockopt(_serverFd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));//chat gpt sugerencia
+	int optval = 1;
+	setsockopt(_serverFd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 	if (_serverFd == -1)
 	{
-		std::cerr<<"error1"<<std::endl;
+		std::cerr << "Error 1" << std::endl;
 		exit(1);
 	}
 	serverAdress.sin_family = AF_INET;
@@ -39,26 +41,26 @@ void Server::SetServer(int port,std::string psw)
 
 	if (fcntl(_serverFd, F_SETFL, O_NONBLOCK) == -1)
 	{
-		std::cerr<<"error2"<<std::endl;
+		std::cerr << "Error 2" << std::endl;
 		exit(2);
 	}
 
 	if (bind (_serverFd,(struct sockaddr *)&serverAdress,sizeof(serverAdress)) == -1)
 	{
-		std::cerr<<"error3"<<std::endl;
+		std::cerr << "Error 3" << std::endl;
 		exit(3);
 	}
 
-	if (listen(_serverFd,10) == -1)
+	if (listen(_serverFd, 10) == -1)
 	{
-		std::cerr<<"error4"<<std::endl;
+		std::cerr << "Error 4" << std::endl;
 		exit(4);
 	}
-
 	NewPoll.fd = _serverFd;
 	NewPoll.events = POLLIN;
 	_pollFds.push_back(NewPoll);
 }
+
 void handler(int signal)
 {
 	(void)signal;
@@ -72,7 +74,7 @@ void Server::RunServer(void)
 	{
 		if (poll(_pollFds.data(),_pollFds.size(),-1) == -1 && sigend == false)
 		{
-			std::cerr<<"errorest"<<std::endl;
+			std::cerr << "Error 5" << std::endl;
 			exit(5);
 		}
 		for (size_t it = 0; it < _pollFds.size(); it++)
@@ -82,58 +84,48 @@ void Server::RunServer(void)
 				if (_pollFds[it].fd == _serverFd)
 					_NewClient();
 				else
-				{
-					std::cout<<"Prueba LEAK DE MEMORIA antes del request"<<std::endl;
 					_Request(_pollFds[it]);
-				}
 			}
-			//POLL out
 			if (_pollFds[it].revents & POLLOUT)
-			{
 				_Response(_pollFds[it]);
-			}
 			if (_pollFds[it].fd != _serverFd )
 			{
 				std::map<int, Client>::iterator its = _Clients.find(_pollFds[it].fd);
-				if (its->second.getFd() == _pollFds[it].fd)//problema de los nulls
-					std::cout << std::endl<< "RunServer: actual buffer for fd: " << _pollFds[it].fd << ": |" << its->second.getBuffer() << "|"<<std::endl<< std::endl;
+				if (its->second.getFd() == _pollFds[it].fd)
+					std::cout << std::endl << "RunServer: actual buffer for fd: " << _pollFds[it].fd << ": |" << its->second.getBuffer() << "|" << std::endl << std::endl;
 			}
 		}
 	}
-
-	std::cout<<"Signal detected"<<std::endl;
+	std::cout << "Signal detected" << std::endl;
 
 	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
-   		_rmClient(it->second);
+		_rmClient(it->second);
 	for (size_t i = 0; i < _pollFds.size(); ++i)
-    {
-        close(_pollFds[i].fd);
-        _pollFds.erase(_pollFds.begin()+i);
-    }
+	{
+		close(_pollFds[i].fd);
+		_pollFds.erase(_pollFds.begin()+i);
+	}
 	close(_serverFd);
 }
 
 void Server::_Response(pollfd &poll)
 {
-
 	int fd = poll.fd;
 	std::map<int, Client>::iterator its = _Clients.find(fd);
 	if (its != _Clients.end())
 	{
-		std::cout<<"Buffer : "<<its->second.getBuffer()<<std::endl;
+		std::cout << "Buffer: " << its->second.getBuffer() << std::endl;
 		std::vector<std::string> commands;
 		std::string line = its->second.getBuffer();
 		commands = _splitString(line, "\r\n");
 		for (size_t i = 0; i < commands.size() - 1; ++i)
 		{
-			std::cout<<"Buffer to command after 0: "<<commands[0]<<std::endl;
-			if(_ProcessCommand(commands[i], fd) == false)
+			if (_ProcessCommand(commands[i], fd) == false)
 			{
 				_rmClient(its->second);
 				return;
 			}
 		}
-		//this is not working, no \r\n in commnads.back, we are splitting by \r\n
 		if (commands.back() == "\r\n")
 			its->second.setBuffer("");
 		else
@@ -144,35 +136,26 @@ void Server::_Response(pollfd &poll)
 
 void Server::_NewClient(void)
 {
-
 	sockaddr_in clientAdress;
 	pollfd NewPoll;
 	socklen_t len = sizeof(clientAdress);
 	int clientFd = accept(_serverFd,(struct sockaddr *)&clientAdress,&len);
 	if (clientFd == -1)
 	{
-		std::cerr<<"error6"<<std::endl;
+		std::cerr << "Error 6" << std::endl;
 		exit(6);
 	}
 	if (fcntl(clientFd, F_SETFL, O_NONBLOCK) == -1)
 	{
-		std::cerr<<"error7"<<std::endl;
+		std::cerr << "Error 7" << std::endl;
 		exit(7);
 	}
 	NewPoll.fd = clientFd;
 	NewPoll.events = POLLIN;
 	_pollFds.push_back(NewPoll);
 	_Clients.insert(std::make_pair(clientFd, Client(clientFd)));
-	std::cout<<"Registered a new client with fd: "<<clientFd<<std::endl;
+	std::cout << "Registered a new client with fd: " << clientFd << std::endl;
 }
-// void replaceAll(std::string& str, const std::string& from, const std::string& to) {
-//     size_t start_pos = 0;
-//     while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
-//         str.replace(start_pos, from.length(), to);
-//         // Mover la posición de inicio después del reemplazo
-//         start_pos += to.length();
-//     }
-//}
 
 void Server::_Request(pollfd &poll)
 {
@@ -180,16 +163,16 @@ void Server::_Request(pollfd &poll)
 	memset(buffer,0,sizeof(buffer));
 	int fd = poll.fd;
 	ssize_t bytes = recv(fd, buffer, sizeof(buffer) - 1 , 0);
-	std::cout<<"Request from client with fd: "<<fd<<std::endl;
+	std::cout << "Request from client with fd: " << fd << std::endl;
 	if (bytes == 0)
 	{
-		std::cout<< "Client left: " << fd << std::endl;
+		std::cout << "Client left: " << fd << std::endl;
 		_rmClient(fd);
 		close(fd);
 	}
 	else if (bytes < 0)
 	{
-		std::cerr<<"error disconection"<<std::endl;
+		std::cerr << "Error disconection" << std::endl;
 		_rmClient(fd);
 		close(fd);
 	}
@@ -200,26 +183,17 @@ void Server::_Request(pollfd &poll)
 
 		if (it != _Clients.end())
 		{
-   		 	it->second.setBuffer(it->second.getBuffer().append(buffer));
-			std::cout<<"Buffer : "<<it->second.getBuffer()<<std::endl;
+			it->second.setBuffer(it->second.getBuffer().append(buffer));
 			std::vector<std::string> commands;
 			std::string line = it->second.getBuffer();
 			commands = _splitString(line, "\r\n");
-
-			if (!commands.empty())
-			{
-				std::cout<<"Buffer to command before: "<<commands[0]<<std::endl;
-				if (commands.size() > 1)
-					poll.events = POLLOUT;
-			}
+			if (!commands.empty() && commands.size() > 1)
+				poll.events = POLLOUT;
 		}
 		else
-		{
 			std::cout << "Client with fd " << fd << " not found." << std::endl;
-		}
 	}
 }
-Server::~Server (void){}
 
 //split a string by one character
 std::vector<std::string>  Server::_splitString(std::string line, char delimiter)
@@ -228,9 +202,7 @@ std::vector<std::string>  Server::_splitString(std::string line, char delimiter)
 	std::istringstream ss(line);
 	std::string token;
 	while (std::getline(ss, token, delimiter))
-	{
 		lines.push_back(token);
-	}
 	return lines;
 }
 
@@ -244,27 +216,17 @@ std::vector<std::string>  Server::_splitString(std::string line, std::string del
 	{
 		subline = line.substr(start, end-start);
 		if (!subline.empty())
-		{
 			lines.push_back(subline);
-			//std::cout<<"pushing back "<<subline<<std::endl;
-		}
 		start = end + delimiter.size();
 	}
 	subline = line.substr(start);
 	if (!subline.empty())
-	{
-			lines.push_back(subline);//last not finished part;
-			//std::cout<<"pushing last line back: "<<subline<<std::endl;
-	}
+		lines.push_back(subline);
 	else
-	{
-			lines.push_back(delimiter);//if i finish i push delimiter so i know its last one.
-			//std::cout<<"pushing DELIMITER back (we got a full command): "<<delimiter<<std::endl;
-	}
+		lines.push_back(delimiter);
 	return lines;
 }
 
-//split a string by a delimiter, but trim and if has : after space(delimiter), then everything after :(sign) is one string
 std::vector<std::string>  Server::_splitString(std::string line, char delimiter, char sign)
 {
 	std::vector<std::string> lines;
@@ -292,20 +254,9 @@ std::vector<std::string>  Server::_splitString(std::string line, char delimiter,
 	//just for print
 	std::cout << "_splitString: Splitted string: " << std::endl;
 	for (std::vector<std::string>::iterator it = lines.begin(); it != lines.end(); ++it)
-   	{
 		std::cout << "|" << *it << "|" << std::endl;
-	}
-
 	return lines;
 }
-
-// static bool	checkInit(Client *client, cmd &c)
-// {
-// 	if (!client->Autenticated() || c.args[0] == "PASS" ||\
-// 	(!client->Registered() && c.args[0] != "USER" && c.args[0] != "NICK"))
-// 		return true;
-// 	return false;
-// }
 
 bool Server::_ProcessCommand(std::string command, int fd)
 {
@@ -315,7 +266,7 @@ bool Server::_ProcessCommand(std::string command, int fd)
 	std::map<int, Client>::iterator it = _Clients.find(fd);
 	if (it != _Clients.end())
 	{
-		std::cout<<"---Hello here is time to process this command: "<<command<<"|"<<std::endl;
+		std::cout << "Its time to process command: " << command << "|" << std::endl;
 
 		if (parsedCommand[0] == "CAP")
 			return (true);
@@ -354,17 +305,15 @@ bool Server::_ProcessCommand(std::string command, int fd)
 
 void Server::_rmClient(const Client &c)
 {
-	//needs more for
 	for (size_t i = 0; i < _pollFds.size(); ++i)
-    {
-        if (c.getFd() == _pollFds[i].fd)
-        {
-            _pollFds.erase(_pollFds.begin() + i);
-            break;
-        }
-    }
+	{
+		if (c.getFd() == _pollFds[i].fd)
+		{
+			_pollFds.erase(_pollFds.begin() + i);
+			break;
+		}
+	}
 	int fd = c.getFd();
-
 	std::vector<Channel> listOfChannels = _Channels;
 	for (std::vector<Channel>::iterator it = listOfChannels.begin(); it != listOfChannels.end(); ++it)
 	{
@@ -373,11 +322,10 @@ void Server::_rmClient(const Client &c)
 		channel.removeInvited(fd);
 		channel.removeOperator(fd);
 
-		//if there is no one in the channel, delete channel
 		if (channel.getMembers().size() < 1)
 		{
 			for (std::vector<Channel>::iterator it = _Channels.begin(); it != _Channels.end(); ++it)
-   			{
+			{
 				if (*it == channel)
 				{
 					this->_Channels.erase(it);
@@ -386,64 +334,57 @@ void Server::_rmClient(const Client &c)
 			}
 		}
 	}
-	//delete _Clients[fd];/problema de malloc, no se donde alocamos memoria
 	close(fd);
 	_Clients.erase(fd);
-
-
 }
-
-
 
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 {
 	std::string cmds[12] = {"JOIN","WHO", "MODE", "PRIVMSG","NOTICE", "ISON", "INVITE", "TOPIC", "KICK", "PING","PART", "BOT"};
 
-	void	(Server::*f[12])(Client &client, std::vector<std::string> parsedCommand) = \
+	void (Server::*f[12])(Client &client, std::vector<std::string> parsedCommand) = \
 	{&Server::_joinServer, &Server::_whoServer, \
-	 &Server::_modeServer, &Server::_privmsgServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer, \
-	 &Server::_topicServer, &Server::_kickServer, &Server::_pingServer,&Server::_partServer,&Server::_botServer};
+	&Server::_modeServer, &Server::_privmsgServer, &Server::_privmsgServer,&Server::_isonServer,&Server::_inviteServer, \
+	&Server::_topicServer, &Server::_kickServer, &Server::_pingServer,&Server::_partServer,&Server::_botServer};
 
-	 for (int i = 0; i < 12; i++)
-	 {
+	for (int i = 0; i < 12; i++)
+	{
 		if (parsedCommand[0] == cmds[i])
 		{
-			std::cout<<"going to function for command "<<cmds[i]<<std::endl;
+			std::cout << "going to function for command " << cmds[i] << std::endl;
 			(this->*f[i])(client, parsedCommand);
 			return ;
 		}
-	 }
-	 _sendMessage(client, "Command does not exists");
+	}
+	_sendMessage(client, "Command does not exists");
 }
 
 void Server::_setTime() {
 
-    std::time_t currentTime = std::time(nullptr);
-    std::tm* localTime = std::localtime(&currentTime);
+	std::time_t currentTime = std::time(nullptr);
+	std::tm* localTime = std::localtime(&currentTime);
 
-    int year = localTime->tm_year + 1900;
-    int month = localTime->tm_mon + 1;
-    int day = localTime->tm_mday;
-    int hour = localTime->tm_hour;
-    int minute = localTime->tm_min;
-    int second = localTime->tm_sec;
+	int year = localTime->tm_year + 1900;
+	int month = localTime->tm_mon + 1;
+	int day = localTime->tm_mday;
+	int hour = localTime->tm_hour;
+	int minute = localTime->tm_min;
+	int second = localTime->tm_sec;
 
-    std::ostringstream oss;
-    oss << std::setw(2) << std::setfill('0') << day << '-'
+	std::ostringstream oss;
+	oss << std::setw(2) << std::setfill('0') << day << '-'
 		<< std::setw(2) << std::setfill('0') << month << '-'
 		<< year << ' '
 		<< std::setw(2) << std::setfill('0') << hour << ':'
 		<< std::setw(2) << std::setfill('0') << minute << ':'
 		<< std::setw(2) << std::setfill('0') << second;
-    this->_time = oss.str();
-    std::cout << "Current date and time: " << _time << std::endl;
+	this->_time = oss.str();
 }
 
 size_t Server::_channelExists(std::string name)
 {
 	for (size_t i = 0; i < _Channels.size(); ++i)
-   	{
-		std::cout<<"--checking channel " << _Channels[i].getName() <<std::endl;
+	{
 		if (name == _Channels[i].getName())
 			return(i + 1);
 	}
@@ -461,7 +402,7 @@ Channel& Server::_getChannelbyname(std::string name)
 int Server::_getClientfdByName(std::string name)
 {
 	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
-   	{
+	{
 		if (it->second.getNickname() == name)
 			return(it->second.getFd());
 	}
@@ -503,9 +444,7 @@ std::string Server::_getChannelMembersTxt(Channel &channel, std::string delimite
 		listOfClients += it->second.getNickname() + delimiter;
 	}
 	if (channel.getBotActive() == true)
-	{
 		listOfClients += "BOT"+ delimiter;
-	}
 	listOfClients.erase(listOfClients.end()-1);
 	return listOfClients;
 }

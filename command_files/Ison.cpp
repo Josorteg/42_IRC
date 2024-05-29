@@ -6,11 +6,11 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 18:53:24 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/17 18:54:22 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:05:31 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"./../inc/Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 void Server::_isonServer(Client &client, std::vector<std::string> parsedCommand)
 {
@@ -24,6 +24,5 @@ void Server::_isonServer(Client &client, std::vector<std::string> parsedCommand)
 		if (_getClientfdByName(parsedCommand[i]) != 0)
 			listOfClients += parsedCommand[i] + " ";
 	}
-	std::cout<<"_isonServer: message is " << message << std::endl;
 	_sendMessage(client, RPL_ISON(_getServername(), client.getNickname(),listOfClients));
 }

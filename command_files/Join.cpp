@@ -6,11 +6,11 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/28 19:02:08 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:09:41 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"./../inc/Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 static bool	nameChecker(std::string name)
 {
@@ -27,9 +27,8 @@ static bool	nameChecker(std::string name)
 
 bool Server::_joinExistingChannel(Client &client, Channel &channel)
 {
-	std::set<int> listOfMembers;
 	std::string message;
-	
+	std::set<int> listOfMembers;
 	std::set<int> listOfInvited = channel.getInvited();
 	std::set<int>::iterator itInvited = listOfInvited.find(client.getFd());
 
@@ -40,7 +39,6 @@ bool Server::_joinExistingChannel(Client &client, Channel &channel)
 	}
 	if (channel.get_i() && itInvited == listOfInvited.end())
 	{
-		std::cout<<"ERROR INVITACION"<<std::endl;
 		_sendMessage(client, ERR_INVITEONLYCHAN(channel.getName()));
 		return (false);
 	}
@@ -73,9 +71,9 @@ void Server::_joinNewChannel(Client &client, std::string channelName)
 
 void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 {
-   std::string message;
+	std::string message;
 
-   if (parsedCommand.size() < 2)
+	if (parsedCommand.size() < 2)
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
 	std::vector<std::string> listOfChannels = _splitString(parsedCommand[1], ',');
 	std::vector<std::string> keyChannels;
@@ -86,38 +84,29 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 		int error = 0;
 		if (!nameChecker(listOfChannels[i]))
 		{
-			_sendMessage(client, ERR_NOSUCHCHANNEL((listOfChannels[i]))); //its correct errror?
+			_sendMessage(client, ERR_NOSUCHCHANNEL((listOfChannels[i])));
 			continue;
 		}
-
 		if (_channelExists((listOfChannels[i])))
 		{
 			Channel& existingChannel = _getChannelbyname(listOfChannels[i]);
-			std::cout<<"BEFORE CHECKING KEY"<<std::endl;
-			//el error esta en el checking!!
 			if (parsedCommand.size() == 2 && existingChannel.get_k())
 			{
-				std::cout<<"NO KEY!!!!!"<<std::endl;
 				_sendMessage(client, ERR_BADCHANNELKEY(client.getNickname(),listOfChannels[i]));
 				continue;
 			}
 			else if (parsedCommand.size() > 2 && ((existingChannel.get_k() && keyChannels.size() < i ) || (existingChannel._getPassword() != keyChannels[i])))
 			{
-				std::cout<<"Bad channel!!!!!"<<std::endl;
-				std::cout<<"Channel : "<< existingChannel.getName()<<"   Password : "<<existingChannel._getPassword()<<"    Key sended : "<<keyChannels[i]<<std::endl;
+				std::cout << "Channel : " << existingChannel.getName() << " Password : " << existingChannel._getPassword() << " Key sended : " << keyChannels[i] <<std::endl;
 				_sendMessage(client, ERR_BADCHANNELKEY(client.getNickname(),listOfChannels[i]));
 				continue;
 			}
-			std::cout<<"AFTER CHECKING KEY"<<std::endl;
-			if(!_joinExistingChannel(client, existingChannel))
+			if (!_joinExistingChannel(client, existingChannel))
 				error = 1;
-			std::cout<<"AFTER JOINING CHANNEL"<<std::endl;
-
 		}
 		else
 			_joinNewChannel(client, listOfChannels[i]);
 
-		/// checkear si esta en el canal, si es que no (return)!!!!!!!!!!!
 		if (error == 0)
 		{
 			Channel& channel = _getChannelbyname(listOfChannels[i]);
@@ -129,18 +118,8 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 				message += channel.getTopic();
 			_sendMessage(client, message);
 
-			// if (channel.getTopic().empty())
-			// 	_sendMessage(client, RPL_NOTOPIC(_getServername(),(channel.getName())));
-			// else
-			// 	_sendMessage(client, RPL_TOPIC(_getServername(),channel.getName(),channel.getTopic()));
-
-			//void _sendMessage(Channel &channel,int clientFdException, std::string message);
 			_sendMessage(channel, 0, RPL_NAMREPLY(_getServername(),client.getNickname(),channel.getName(),listOfClients));
 			_sendMessage(channel, 0, RPL_ENDOFNAMES(channel.getName()));
 		}
-		else
-		;
-			//:irc.example.com NOTICE yourNickname :You have left channel #channel
-
 	}
 }

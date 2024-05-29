@@ -6,11 +6,11 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 10:04:35 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/28 18:21:31 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:15:21 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"./../inc/Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 static bool	nickChecker(std::string nick)
 {
@@ -48,15 +48,10 @@ bool Server::_nickServer(Client &client, std::vector<std::string> parsedCommand)
 		message = "Nick was changed to : " + client.getNickname();
 		_sendMessage(client, message);
 
-		//:old_nickname!user@host NICK :new_nickname
-
 		message = ":" + oldNickname + "!" + client.getHostname() + " NICK :" + client.getNickname();
-		//_sendMessage(client, message);
-
 		for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
-   		{
 			_sendMessage(it->second, message);
-		}
+
 	}
 	else if (!client.getUsername().empty() && client.getHasPassword())
 	{

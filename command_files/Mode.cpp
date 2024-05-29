@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/27 18:53:43 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:14:53 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void Server::_modeExe(Client &client, Channel &channel, std::vector<std::pair<st
 	{
 		for (size_t j = 0; j < 5; j++)
 		{
-			if (parsedFlags[i].first[1] == cmds[j][0]) //example: <+o,username> - parsedFlags[i].first is "+o" and I take [1] which is "o"
+			if (parsedFlags[i].first[1] == cmds[j][0])
 			{
 				(this->*fn[j])(client, channel, parsedFlags[i]);
 				break;
@@ -63,16 +63,12 @@ void Server::_modeExe(Client &client, Channel &channel, std::vector<std::pair<st
 
 void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 {
-	std::cout<<"Before checking size"<<std::endl;
 	if (parsedCommand.size() < 2)
 		return(_sendMessage(client, ERR_NEEDMOREPARAMS(parsedCommand[0])));
-	std::cout<<"Before checking channel exist"<<std::endl;
 	if (!_channelExists((parsedCommand[1])))
 		return(_sendMessage(client, ERR_NOSUCHCHANNEL(parsedCommand[1])));
-	std::cout<<"Before create channel "<<std::endl;
-	Channel& channel = _getChannelbyname((parsedCommand[1]));// malloc error when no channel name
-	std::cout<<"after create channel exist"<<std::endl;
 
+	Channel& channel = _getChannelbyname((parsedCommand[1]));
 	if (parsedCommand.size() == 2)
 	{
 		std::string flags = "";
@@ -84,22 +80,14 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 			flags += "l";
 		if (channel.get_t())
 			flags += "t";
-
-		std::cout<<"MODE all flags "<< flags << std::endl;
-
 		_sendMessage(client, RPL_CHANNELMODEIS(_getServername(),client.getNickname(),channel.getName(),flags));
 		return;
 	}
 
-    if (!channel.isMember(client.getFd())) //check if client is member of the channel
+	if (!channel.isMember(client.getFd()))
 		return(_sendMessage(client, ERR_NOTONCHANNEL(_getServername(), parsedCommand[1])));
-	if (!channel.isOperator(client.getFd())) //check if client is operator
+	if (!channel.isOperator(client.getFd()))
 		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), parsedCommand[1])));
-
-	//parse data to vector of pairs
-	/* for example MODE #1 ok+o-tli username password username2 50
-		creates this vector: < <+o,username>,<+k,password>,<+o,username2>,<-t,empty>,<+l,50>,<+i,empty> >
-	*/
 
 	std::string flags = parsedCommand[2];
 	std::vector<std::pair<std::string, std::string> > parsedFlags;
@@ -131,11 +119,9 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 			_sendMessage(client, ERR_UNKNOWNMODE(_getServername(),parsedCommand[1],flag));
 		}
 	}
-	//just print, (delete later)
 	for (size_t i = 0; i < parsedFlags.size(); ++i)
 	{
 		std::cout << "Flag: " << parsedFlags[i].first << ", Parameter: " << parsedFlags[i].second << std::endl;
 	}
-	//now lets call proper functions
 	_modeExe(client, channel, parsedFlags);
 }

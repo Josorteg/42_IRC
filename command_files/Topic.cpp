@@ -6,11 +6,11 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/04 13:40:20 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/27 18:53:24 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:18:37 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"./../inc/Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand)
 {
@@ -37,7 +37,7 @@ void Server::_topicServer(Client &client, std::vector<std::string> parsedCommand
 	}
 	if (channel.get_t() == true && !channel.isOperator(client.getFd()))
 		return(_sendMessage(client, ERR_CHANOPRIVSNEEDED(_getServername(), channel.getName())));
-		
+
 	channel.setTopic(parsedCommand[2]);
 	message = ":" + client.getNickname() + "!" + client.getHostname() + " TOPIC " + channel.getName();
 	if (!channel.getTopic().empty())

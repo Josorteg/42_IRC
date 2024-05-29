@@ -3,20 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: josorteg <josorteg@student.42barcel>       +#+  +:+       +#+        */
+/*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 17:00:28 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/10 12:12:38 by josorteg         ###   ########.fr       */
+/*   Updated: 2024/05/30 00:22:31 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include"./../inc/Includes.hpp"
+#include "./../inc/Includes.hpp"
 
 class Client
 {
 	public:
-
 		Client(void);
 		Client(int fd);
 		~Client(void);
@@ -40,7 +39,6 @@ class Client
 		std::string getBuffer(void) const {return this->_buffer;};
 
 	private:
-
 		int	_clientFd;
 		bool _hasPassword;
 		bool _isRegistered;
@@ -49,6 +47,5 @@ class Client
 		std::string _hostname;
 		std::string _realname;
 		std::string _buffer;
-
 };
 
