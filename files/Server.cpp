@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/30 00:46:09 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 01:30:47 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,10 @@ void Server::RunServer(void)
 	std::cout << "Signal detected" << std::endl;
 
 	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
+	{
 		_rmClient(it->second);
+		it = _Clients.erase(it);
+	}
 	for (size_t i = 0; i < _pollFds.size(); ++i)
 	{
 		close(_pollFds[i].fd);
@@ -123,6 +126,7 @@ void Server::_Response(pollfd &poll)
 			if (_ProcessCommand(commands[i], fd) == false)
 			{
 				_rmClient(its->second);
+				_Clients.erase(its);
 				return;
 			}
 		}
@@ -168,13 +172,13 @@ void Server::_Request(pollfd &poll)
 	{
 		std::cout << "Client left: " << fd << std::endl;
 		_rmClient(fd);
-		close(fd);
+		_Clients.erase(fd);
 	}
 	else if (bytes < 0)
 	{
 		std::cerr << "Error disconection" << std::endl;
 		_rmClient(fd);
-		close(fd);
+		_Clients.erase(fd);
 	}
 	else
 	{
@@ -314,28 +318,18 @@ void Server::_rmClient(const Client &c)
 		}
 	}
 	int fd = c.getFd();
-	std::vector<Channel> listOfChannels = _Channels;
-	for (std::vector<Channel>::iterator it = listOfChannels.begin(); it != listOfChannels.end(); ++it)
+	for (std::vector<Channel>::iterator it = _Channels.begin(); it != _Channels.end(); ++it)
 	{
 		Channel channel = *it;
 		channel.removeMember(fd);
 		channel.removeInvited(fd);
 		channel.removeOperator(fd);
 
-		if (channel.getMembers().size() < 1)
-		{
-			for (std::vector<Channel>::iterator it = _Channels.begin(); it != _Channels.end(); ++it)
-			{
-				if (*it == channel)
-				{
-					this->_Channels.erase(it);
-					break;
-				}
-			}
-		}
+		if (channel.getMembers().empty())
+			_Channels.erase(it);
 	}
 	close(fd);
-	_Clients.erase(fd);
+	//_Clients.erase(fd);
 }
 
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
