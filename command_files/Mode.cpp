@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:15:44 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/30 00:14:53 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 18:35:05 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,10 +118,6 @@ void Server::_modeServer(Client &client, std::vector<std::string> parsedCommand)
 			flag += flags[i];
 			_sendMessage(client, ERR_UNKNOWNMODE(_getServername(),parsedCommand[1],flag));
 		}
-	}
-	for (size_t i = 0; i < parsedFlags.size(); ++i)
-	{
-		std::cout << "Flag: " << parsedFlags[i].first << ", Parameter: " << parsedFlags[i].second << std::endl;
 	}
 	_modeExe(client, channel, parsedFlags);
 }

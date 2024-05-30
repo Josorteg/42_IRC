@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 14:54:15 by mmoramov          #+#    #+#             */
-/*   Updated: 2024/05/30 00:09:41 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 18:34:44 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ void Server::_joinServer(Client &client, std::vector<std::string> parsedCommand)
 			}
 			else if (parsedCommand.size() > 2 && ((existingChannel.get_k() && keyChannels.size() < i ) || (existingChannel._getPassword() != keyChannels[i])))
 			{
-				std::cout << "Channel : " << existingChannel.getName() << " Password : " << existingChannel._getPassword() << " Key sended : " << keyChannels[i] <<std::endl;
 				_sendMessage(client, ERR_BADCHANNELKEY(client.getNickname(),listOfChannels[i]));
 				continue;
 			}

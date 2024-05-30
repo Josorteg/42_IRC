@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/30 18:15:50 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 18:36:45 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int Server::_Response(pollfd &poll)
 	std::map<int, Client>::iterator its = _Clients.find(fd);
 	if (its != _Clients.end())
 	{
-		std::cout << "Buffer: " << its->second.getBuffer() << std::endl;
+		std::cout << "Received: " << its->second.getBuffer() << std::endl;
 		std::vector<std::string> commands;
 		std::string line = its->second.getBuffer();
 		commands = _splitString(line, "\r\n");
@@ -253,11 +253,6 @@ std::vector<std::string>  Server::_splitString(std::string line, char delimiter,
 	subline = line.substr(start);
 	if (!subline.empty())
 		lines.push_back(subline);
-
-	//just for print
-	std::cout << "_splitString: Splitted string: " << std::endl;
-	for (std::vector<std::string>::iterator it = lines.begin(); it != lines.end(); ++it)
-		std::cout << "|" << *it << "|" << std::endl;
 	return lines;
 }
 
@@ -269,7 +264,7 @@ bool Server::_ProcessCommand(std::string command, int fd)
 	std::map<int, Client>::iterator it = _Clients.find(fd);
 	if (it != _Clients.end())
 	{
-		std::cout << "Its time to process command: " << command << "|" << std::endl;
+		std::cout << "Its time to process command: |" << command << "|" << std::endl;
 
 		if (parsedCommand[0] == "CAP")
 			return (true);
@@ -348,7 +343,6 @@ void Server::_exe(Client &client, std::vector<std::string> parsedCommand)
 	{
 		if (parsedCommand[0] == cmds[i])
 		{
-			std::cout << "going to function for command " << cmds[i] << std::endl;
 			(this->*f[i])(client, parsedCommand);
 			return ;
 		}
