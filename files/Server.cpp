@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:30:55 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/30 01:30:47 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 18:15:50 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,10 @@ void handler(int signal)
 void Server::RunServer(void)
 {
 	std::signal(SIGINT,handler);
+	int result;
 	while (sigend == false)
 	{
+		
 		if (poll(_pollFds.data(),_pollFds.size(),-1) == -1 && sigend == false)
 		{
 			std::cerr << "Error 5" << std::endl;
@@ -79,26 +81,27 @@ void Server::RunServer(void)
 		}
 		for (size_t it = 0; it < _pollFds.size(); it++)
 		{
+			result = 0;
 			if (_pollFds[it].revents & POLLIN)
 			{
 				if (_pollFds[it].fd == _serverFd)
 					_NewClient();
 				else
-					_Request(_pollFds[it]);
+					result = _Request(_pollFds[it]);
 			}
-			if (_pollFds[it].revents & POLLOUT)
-				_Response(_pollFds[it]);
-			if (_pollFds[it].fd != _serverFd )
+			if (result == 0 && _pollFds[it].revents & POLLOUT)
+				result = _Response(_pollFds[it]);
+			if (result == 1)
 			{
 				std::map<int, Client>::iterator its = _Clients.find(_pollFds[it].fd);
-				if (its->second.getFd() == _pollFds[it].fd)
-					std::cout << std::endl << "RunServer: actual buffer for fd: " << _pollFds[it].fd << ": |" << its->second.getBuffer() << "|" << std::endl << std::endl;
+				_rmClient(its->second);	
+				_Clients.erase(its);
 			}
 		}
 	}
 	std::cout << "Signal detected" << std::endl;
 
-	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end(); ++it)
+	for (std::map<int, Client>::iterator it = _Clients.begin(); it != _Clients.end();)
 	{
 		_rmClient(it->second);
 		it = _Clients.erase(it);
@@ -111,7 +114,7 @@ void Server::RunServer(void)
 	close(_serverFd);
 }
 
-void Server::_Response(pollfd &poll)
+int Server::_Response(pollfd &poll)
 {
 	int fd = poll.fd;
 	std::map<int, Client>::iterator its = _Clients.find(fd);
@@ -124,11 +127,7 @@ void Server::_Response(pollfd &poll)
 		for (size_t i = 0; i < commands.size() - 1; ++i)
 		{
 			if (_ProcessCommand(commands[i], fd) == false)
-			{
-				_rmClient(its->second);
-				_Clients.erase(its);
-				return;
-			}
+				return(1);
 		}
 		if (commands.back() == "\r\n")
 			its->second.setBuffer("");
@@ -136,6 +135,7 @@ void Server::_Response(pollfd &poll)
 			its->second.setBuffer(commands.back());
 		poll.events = POLLIN;
 	}
+	return(0);
 }
 
 void Server::_NewClient(void)
@@ -161,7 +161,7 @@ void Server::_NewClient(void)
 	std::cout << "Registered a new client with fd: " << clientFd << std::endl;
 }
 
-void Server::_Request(pollfd &poll)
+int Server::_Request(pollfd &poll)
 {
 	char buffer[1024];
 	memset(buffer,0,sizeof(buffer));
@@ -171,14 +171,12 @@ void Server::_Request(pollfd &poll)
 	if (bytes == 0)
 	{
 		std::cout << "Client left: " << fd << std::endl;
-		_rmClient(fd);
-		_Clients.erase(fd);
+		return(1);
 	}
 	else if (bytes < 0)
 	{
 		std::cerr << "Error disconection" << std::endl;
-		_rmClient(fd);
-		_Clients.erase(fd);
+		return(1);
 	}
 	else
 	{
@@ -197,6 +195,7 @@ void Server::_Request(pollfd &poll)
 		else
 			std::cout << "Client with fd " << fd << " not found." << std::endl;
 	}
+	return(0);
 }
 
 //split a string by one character
@@ -318,18 +317,22 @@ void Server::_rmClient(const Client &c)
 		}
 	}
 	int fd = c.getFd();
-	for (std::vector<Channel>::iterator it = _Channels.begin(); it != _Channels.end(); ++it)
+	if (!_Channels.empty())
 	{
-		Channel channel = *it;
-		channel.removeMember(fd);
-		channel.removeInvited(fd);
-		channel.removeOperator(fd);
+		for (std::vector<Channel>::iterator it = _Channels.begin(); it != _Channels.end();)
+		{
+			Channel channel = *it;
+			channel.removeMember(fd);
+			channel.removeInvited(fd);
+			channel.removeOperator(fd);
 
-		if (channel.getMembers().empty())
-			_Channels.erase(it);
+			if (channel.getMembers().empty())
+				it = _Channels.erase(it);
+			else
+				it++;
+		}
 	}
 	close(fd);
-	//_Clients.erase(fd);
 }
 
 void Server::_exe(Client &client, std::vector<std::string> parsedCommand)

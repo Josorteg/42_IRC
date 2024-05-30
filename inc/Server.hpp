@@ -6,7 +6,7 @@
 /*   By: mmoramov <mmoramov@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 18:19:33 by josorteg          #+#    #+#             */
-/*   Updated: 2024/05/30 00:25:57 by mmoramov         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:50:37 by mmoramov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ class Server
 
 	private:
 		void _NewClient(void);
-		void _Request(pollfd &poll);
-		void _Response(pollfd &poll);
+		int _Request(pollfd &poll);
+		int _Response(pollfd &poll);
 		bool _ProcessCommand(std::string command, int fd);
 		std::vector<std::string> _splitString(std::string line, char delimiter);
 		std::vector<std::string> _splitString(std::string line, std::string delimiter);
